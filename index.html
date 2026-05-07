@@ -1,264 +1,569 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0a0a0f" />
-  <title>DA Game Center — Free Online Games</title>
-  <meta name="description" content="Free browser games. No download, no login. Play instantly." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAGameCenter - Free Browser Games</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:    #0a0a0f; --card: #12121c; --border: rgba(255,255,255,0.07);
-      --acc:   #e94560; --acc2: #ff6b82; --text:   #f0f0f4;
-      --muted: rgba(255,255,255,0.42); --faint:  rgba(255,255,255,0.05);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100dvh; }
-
-    /* OVERLAY */
-    #overlay { display:none; position:fixed; inset:0; background:#000; z-index:9999; flex-direction:column; }
-    #overlay.on { display:flex; }
-    #obar { height:46px; background:#0c0c14; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 14px; gap:10px; flex-shrink:0; }
-    #obar-title { font-size:13px; font-weight:600; color:var(--muted); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    #gframe { flex:1; border:none; width:100%; }
-    .x-btn { background:var(--acc); color:#fff; border:none; padding:7px 16px; border-radius:7px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; touch-action:manipulation; }
-    .x-btn:active { background:var(--acc2); }
-
-    /* HEADER */
-    header { position:sticky; top:0; z-index:100; background:rgba(10,10,15,.92); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
-    .hdr { max-width:1400px; margin:0 auto; padding:0 16px; height:48px; display:flex; align-items:center; gap:10px; }
-    .logo { font-size:17px; font-weight:800; letter-spacing:-.4px; text-decoration:none; color:var(--text); flex-shrink:0; }
-    .logo b { color:var(--acc); }
-    .search { flex:1; max-width:300px; margin-left:auto; display:flex; align-items:center; gap:8px; background:var(--faint); border:1px solid var(--border); border-radius:8px; padding:0 11px; height:34px; }
-    .search svg { flex-shrink:0; color:var(--muted); }
-    .search input { flex:1; background:none; border:none; outline:none; color:var(--text); font-size:13px; font-family:inherit; min-width:0; }
-    .search input::placeholder { color:var(--muted); }
-
-    /* WRAP */
-    .wrap { max-width:1400px; margin:0 auto; padding:0 14px; }
-
-    /* AD */
-    .ad-wrap { padding:12px 0 4px; }
-    .ad-box { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; min-height:80px; }
-
-    /* CATS */
-    .cats { display:flex; gap:6px; overflow-x:auto; padding:12px 0 10px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
-    .cats::-webkit-scrollbar { display:none; }
-    .cat { flex-shrink:0; background:var(--faint); border:1px solid var(--border); color:var(--muted); font-size:12px; font-weight:600; padding:6px 14px; border-radius:100px; cursor:pointer; transition:all .15s; white-space:nowrap; touch-action:manipulation; }
-    .cat:hover { color:var(--text); border-color:rgba(255,255,255,.15); }
-    .cat.on { background:rgba(233,69,96,.15); border-color:rgba(233,69,96,.3); color:var(--acc); }
-
-    /* SEC LABEL */
-    .sec-lbl { font-size:12px; font-weight:700; color:var(--muted); letter-spacing:.3px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
-    .sec-lbl::after { content:''; flex:1; height:1px; background:var(--border); }
-
-    /* GRID */
-    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:24px; }
-    @media(min-width:480px)  { .grid { grid-template-columns:repeat(3,1fr); } }
-    @media(min-width:700px)  { .grid { grid-template-columns:repeat(4,1fr); } }
-    @media(min-width:1000px) { .grid { grid-template-columns:repeat(5,1fr); } }
-    @media(min-width:1300px) { .grid { grid-template-columns:repeat(6,1fr); } }
-
-    /* CARD */
-    .gc { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; cursor:pointer; text-decoration:none; color:inherit; display:flex; flex-direction:column; transition:transform .18s cubic-bezier(.34,1.5,.64,1),box-shadow .18s,border-color .18s; touch-action:manipulation; }
-    .gc:hover { transform:translateY(-4px) scale(1.01); box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(233,69,96,.2); border-color:rgba(233,69,96,.2); }
-    .gc:active { transform:scale(.97); }
-    .gc-img { aspect-ratio:16/10; position:relative; overflow:hidden; background:#0d0d18; }
-
-    /* FACTORY ART */
-    .fac { width:100%; height:100%; background:linear-gradient(155deg,#160e06 0%,#0c0806 100%); position:relative; overflow:hidden; }
-    .fac-glow { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 20%,rgba(196,160,0,.07) 0%,transparent 70%); }
-    .fac-ch { position:absolute; background:#2a1808; border-radius:2px 2px 0 0; }
-    .fac-c1 { width:10px; height:36px; bottom:48px; left:27%; }
-    .fac-c2 { width:8px; height:28px; bottom:48px; left:calc(27% + 15px); }
-    .fac-sm { position:absolute; border-radius:50%; background:rgba(150,140,120,.22); animation:fsmk 2.5s ease-out infinite; }
-    .sm1 { width:8px; height:8px; bottom:84px; left:calc(27% + 1px); }
-    .sm2 { width:6px; height:6px; bottom:76px; left:calc(27% + 17px); animation-delay:-.9s; }
-    @keyframes fsmk { 0%{transform:translateY(0) scale(1);opacity:.4} 100%{transform:translateY(-28px) scale(2.5);opacity:0} }
-    .fac-body { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:60%; height:42px; background:#3a2810; border-radius:3px; display:grid; grid-template-columns:repeat(4,1fr); gap:3px; padding:7px 5px 4px; }
-    .fac-win { background:#c4a000; border-radius:2px; box-shadow:0 0 6px rgba(196,160,0,.65); animation:fwgl 2s ease-in-out infinite alternate; }
-    .fac-win:nth-child(2){animation-delay:-.7s} .fac-win:nth-child(3){animation-delay:-1.3s} .fac-win:nth-child(4){animation-delay:-.3s}
-    @keyframes fwgl { from{opacity:.5} to{opacity:1} }
-    .fac-gear { position:absolute; bottom:6px; right:8%; width:18px; height:18px; border:3px solid rgba(196,160,0,.5); border-radius:50%; animation:gsp 4s linear infinite; }
-    @keyframes gsp { to{transform:rotate(360deg)} }
-
-    /* PLAY OV */
-    .play-ov { position:absolute; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .18s; }
-    .gc:hover .play-ov { opacity:1; }
-    @media(hover:none) { .play-ov { opacity:1; background:rgba(0,0,0,.22); } }
-    .play-c { width:40px; height:40px; border-radius:50%; background:var(--acc); display:flex; align-items:center; justify-content:center; font-size:13px; color:#fff; box-shadow:0 0 22px rgba(233,69,96,.5); transform:scale(.75); transition:transform .18s; }
-    .gc:hover .play-c { transform:scale(1); }
-    @media(hover:none) { .play-c { transform:scale(.88); } }
-    .gc-badge { position:absolute; top:7px; left:7px; background:var(--acc); color:#fff; font-size:9px; font-weight:700; letter-spacing:.4px; padding:2px 7px; border-radius:4px; }
-
-    /* SOON CARD */
-    .gc-soon .gc-img { background:#0d0d18; display:flex; align-items:center; justify-content:center; }
-    .soon-ring { width:42px; height:42px; border-radius:50%; border:2px dashed rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.1); font-size:18px; }
-
-    .gc-body { padding:10px 11px 12px; flex:1; display:flex; flex-direction:column; gap:5px; }
-    .gc-name { font-size:12px; font-weight:700; line-height:1.3; }
-    .gc-meta { display:flex; gap:5px; flex-wrap:wrap; }
-    .gc-tag { background:var(--faint); color:var(--muted); font-size:10px; font-weight:500; padding:2px 7px; border-radius:4px; }
-    .gc-soon .gc-name { color:rgba(255,255,255,.18); }
-    .gc-soon .gc-tag { color:rgba(255,255,255,.1); }
-
-    /* PROMO (full-width card) */
-    .promo { grid-column:1/-1; background:linear-gradient(120deg,#1a0a18 0%,#100a1e 50%,#0a1018 100%); border:1px solid rgba(233,69,96,.2); border-radius:12px; overflow:hidden; display:flex; align-items:center; gap:18px; padding:20px 22px; cursor:pointer; text-decoration:none; color:inherit; position:relative; transition:box-shadow .2s; touch-action:manipulation; }
-    .promo:hover { box-shadow:0 10px 36px rgba(233,69,96,.14); }
-    .promo::after { content:''; position:absolute; top:-50px; right:-30px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle,rgba(233,69,96,.12) 0%,transparent 70%); pointer-events:none; }
-    .promo-art { width:88px; height:68px; flex-shrink:0; border-radius:8px; overflow:hidden; position:relative; }
-    .promo-art .fac { position:absolute; inset:0; }
-    .promo-txt { flex:1; min-width:0; }
-    .promo-eye { display:inline-flex; align-items:center; gap:5px; background:rgba(233,69,96,.12); border:1px solid rgba(233,69,96,.2); color:var(--acc); font-size:10px; font-weight:700; letter-spacing:.4px; padding:3px 9px; border-radius:100px; margin-bottom:7px; }
-    .promo-dot { width:5px; height:5px; border-radius:50%; background:var(--acc); animation:blink 1.5s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
-    .promo-title { font-size:clamp(15px,3vw,20px); font-weight:800; letter-spacing:-.3px; margin-bottom:4px; }
-    .promo-desc { font-size:12px; color:var(--muted); line-height:1.6; margin-bottom:12px; }
-    .promo-btn { display:inline-flex; align-items:center; gap:6px; background:var(--acc); color:#fff; padding:8px 16px; border-radius:7px; font-size:12px; font-weight:700; box-shadow:0 4px 14px rgba(233,69,96,.35); }
-    @media(max-width:440px) { .promo { flex-direction:column; align-items:flex-start; padding:16px; } .promo-art { width:56px; height:44px; } }
-
-    /* FEATURES */
-    .feats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:24px; }
-    @media(max-width:550px) { .feats { grid-template-columns:1fr; } }
-    .feat { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; }
-    .feat-icon { font-size:20px; margin-bottom:8px; }
-    .feat-title { font-size:13px; font-weight:700; margin-bottom:4px; }
-    .feat-desc { font-size:11px; color:var(--muted); line-height:1.7; }
-
-    /* FOOTER */
-    footer { border-top:1px solid var(--border); padding:18px 14px; max-width:1400px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-    .flogo { font-weight:800; font-size:13px; }
-    .flogo b { color:var(--acc); }
-    footer p, footer a { font-size:11px; color:var(--muted); text-decoration:none; }
-    footer a:hover { color:var(--text); }
-
-    ::-webkit-scrollbar { width:4px; }
-    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:3px; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0f;
+      color: white;
+      min-height: 100vh;
+    }
+    
+    /* Ad Banner Top */
+    .ad-banner-top {
+      background: #1a1a2e;
+      padding: 10px;
+      text-align: center;
+      min-height: 90px;
+    }
+    
+    /* Header */
+    header {
+      background: linear-gradient(90deg, #e94560, #ff6b6b);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    
+    .logo span {
+      color: #ffd700;
+    }
+    
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 25px;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    nav a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 60px 30px;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      background: linear-gradient(90deg, #fff, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .hero p {
+      color: #888;
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+    
+    /* Game Container */
+    #game-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 200;
+    }
+    
+    #game-container.active {
+      display: block;
+    }
+    
+    #game-frame {
+      width: 100%;
+      height: calc(100% - 180px);
+      border: none;
+    }
+    
+    .game-controls {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #1a1a2e;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .close-game {
+      background: #e94560;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    .reward-btn {
+      background: linear-gradient(90deg, #ffd700, #ff8c00);
+      color: #000;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .reward-btn:hover {
+      transform: scale(1.05);
+    }
+    
+    /* Ad Banner Bottom */
+    .ad-banner-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1a1a2e;
+      padding: 10px;
+      text-align: center;
+      min-height: 90px;
+    }
+    
+    /* Reward Modal */
+    #reward-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      z-index: 300;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #reward-modal.active {
+      display: flex;
+    }
+    
+    .reward-modal-content {
+      background: #1a1a2e;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 400px;
+    }
+    
+    .reward-modal-content h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #ffd700;
+    }
+    
+    .reward-modal-content p {
+      color: #888;
+      margin-bottom: 25px;
+    }
+    
+    .watch-ad-btn {
+      background: linear-gradient(90deg, #e94560, #ff6b6b);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+    
+    .cancel-btn {
+      background: transparent;
+      border: 1px solid #666;
+      color: #888;
+      padding: 10px 30px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    
+    /* Game Grid */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .section-title span {
+      font-size: 2rem;
+    }
+    
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    
+    .game-card {
+      background: #16162a;
+      border-radius: 15px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .game-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(233,69,96,0.3);
+    }
+    
+    .game-thumb {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, #e94560, #533483);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+    }
+    
+    .game-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ffd700;
+      color: #000;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    
+    .game-play {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .game-card:hover .game-play {
+      opacity: 1;
+    }
+    
+    .game-info {
+      padding: 20px;
+    }
+    
+    .game-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    .game-desc {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    
+    .game-meta {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      color: #888;
+      font-size: 0.85rem;
+    }
+    
+    /* Categories */
+    .categories {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .cat-btn {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .cat-btn:hover, .cat-btn.active {
+      background: #e94560;
+      border-color: #e94560;
+    }
+    
+    /* Footer */
+    footer {
+      background: #0d0d15;
+      padding: 40px 20px;
+      text-align: center;
+      color: #666;
+    }
+    
+    footer a {
+      color: #e94560;
+      text-decoration: none;
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .games-grid { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
-
-  <div id="overlay">
-    <div id="obar">
-      <span id="obar-title">Loading...</span>
-      <button class="x-btn" onclick="closeGame()">✕ Close</button>
-    </div>
-    <iframe id="gframe" src="" allowfullscreen></iframe>
+  
+  <!-- Ad Banner Top -->
+  <div class="ad-banner-top">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-2551267052794968"
+         data-ad-slot="YOUR_TOP_AD_SLOT"
+         data-ad-format="horizontal"
+         data-full-width-responsive="true"></ins>
   </div>
-
+  
   <header>
-    <div class="hdr">
-      <a href="#" class="logo">DA<b>Game</b>Center</a>
-      <div class="search">
-        <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="18" y2="18"/></svg>
-        <input type="search" placeholder="Search games..." autocomplete="off" oninput="doSearch(this.value)" />
-      </div>
-    </div>
+    <div class="logo">DA<span>Game</span>Center</div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#games">Games</a>
+      <a href="#about">About</a>
+    </nav>
   </header>
-
-  <div class="wrap">
-
-    <div class="ad-wrap">
-      <div class="ad-box">
-        <ins class="adsbygoogle" data-ad-client="ca-pub-2551267052794968" data-ad-slot="8553436140" data-ad-format="auto" data-full-width-responsive="true" style="display:block;min-height:80px"></ins>
-      </div>
+  
+  <!-- Game Player -->
+  <div id="game-container">
+    <div class="game-controls">
+      <button class="close-game" onclick="closeGame()">✕ Close Game</button>
+      <button class="reward-btn" onclick="showRewardModal()">
+        🎁 Watch Ad for Bonus!
+      </button>
     </div>
-
-    <div class="cats">
-      <div class="cat on"         onclick="filterCat('all',this)">All</div>
-      <div class="cat" onclick="filterCat('idle',this)">🏭 Idle</div>
-      <div class="cat" onclick="filterCat('strategy',this)">♟ Strategy</div>
-      <div class="cat" onclick="filterCat('action',this)">⚡ Action</div>
-      <div class="cat" onclick="filterCat('puzzle',this)">🧩 Puzzle</div>
+    <iframe id="game-frame" src=""></iframe>
+    
+    <!-- Ad Banner Bottom -->
+    <div class="ad-banner-bottom">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-2551267052794968"
+           data-ad-slot="YOUR_BOTTOM_AD_SLOT"
+           data-ad-format="horizontal"
+           data-full-width-responsive="true"></ins>
     </div>
-
-    <div class="sec-lbl">Games</div>
-    <div class="grid" id="grid">
-
-      <!-- FEATURED PROMO -->
-      <a class="promo" data-cat="idle strategy" href="#"
-        onclick="playGame('game/idle-factory/','Idle Factory Tycoon');return false;">
-        <div class="promo-art">
-          <div class="fac"><div class="fac-glow"></div><div class="fac-ch fac-c1"></div><div class="fac-ch fac-c2"></div><div class="fac-sm sm1"></div><div class="fac-sm sm2"></div><div class="fac-body"><div class="fac-win"></div><div class="fac-win"></div><div class="fac-win"></div><div class="fac-win"></div></div><div class="fac-gear"></div></div>
-        </div>
-        <div class="promo-txt">
-          <div class="promo-eye"><span class="promo-dot"></span>FEATURED</div>
-          <div class="promo-title">Idle Factory Tycoon</div>
-          <div class="promo-desc">Build from a rusty workshop to a cyberpunk megacorp. 10 worlds, 47 achievements.</div>
-          <div class="promo-btn">▶ Play Free</div>
-        </div>
-      </a>
-
-      <!-- GAME CARD -->
-      <a class="gc" data-cat="idle strategy" href="#"
-        onclick="playGame('game/idle-factory/','Idle Factory Tycoon');return false;">
-        <div class="gc-img">
-          <div class="fac"><div class="fac-glow"></div><div class="fac-ch fac-c1"></div><div class="fac-ch fac-c2"></div><div class="fac-sm sm1"></div><div class="fac-sm sm2"></div><div class="fac-body"><div class="fac-win"></div><div class="fac-win"></div><div class="fac-win"></div><div class="fac-win"></div></div><div class="fac-gear"></div></div>
-          <div class="play-ov"><div class="play-c">▶</div></div>
-          <div class="gc-badge">Hot</div>
-        </div>
-        <div class="gc-body">
-          <div class="gc-name">Idle Factory Tycoon</div>
-          <div class="gc-meta"><span class="gc-tag">Idle</span><span class="gc-tag">Free</span></div>
-        </div>
-      </a>
-
-      <div class="gc gc-soon" data-cat="all"><div class="gc-img"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name">Coming soon</div><div class="gc-meta"><span class="gc-tag">TBD</span></div></div></div>
-      <div class="gc gc-soon" data-cat="all"><div class="gc-img"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name">Coming soon</div><div class="gc-meta"><span class="gc-tag">TBD</span></div></div></div>
-      <div class="gc gc-soon" data-cat="all"><div class="gc-img"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name">Coming soon</div><div class="gc-meta"><span class="gc-tag">TBD</span></div></div></div>
-      <div class="gc gc-soon" data-cat="all"><div class="gc-img"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name">Coming soon</div><div class="gc-meta"><span class="gc-tag">TBD</span></div></div></div>
-
-    </div>
-
-    <div class="sec-lbl">Why play here</div>
-    <div class="feats">
-      <div class="feat"><div class="feat-icon">⚡</div><div class="feat-title">Instant play</div><div class="feat-desc">Click and play in seconds. No download, no account.</div></div>
-      <div class="feat"><div class="feat-icon">🎮</div><div class="feat-title">Real games</div><div class="feat-desc">Hours of content crafted with care. Not just demos.</div></div>
-      <div class="feat"><div class="feat-icon">🔒</div><div class="feat-title">Privacy first</div><div class="feat-desc">Saves stay on your device. We don't sell your data.</div></div>
-    </div>
-
   </div>
-
-  <footer>
-    <span class="flogo">DA<b>Game</b>Center</span>
-    <p>© 2026 dagamecenter.com</p>
-    <a href="privacy.html">Privacy</a>
+  
+  <!-- Reward Modal -->
+  <div id="reward-modal">
+    <div class="reward-modal-content">
+      <h2>🎁 Watch & Earn!</h2>
+      <p>Watch a short ad and unlock bonus rewards in your game!</p>
+      <button class="watch-ad-btn" onclick="watchRewardedAd()">
+        ▶ Watch Ad
+      </button>
+      <br>
+      <button class="cancel-btn" onclick="closeRewardModal()">No Thanks</button>
+    </div>
+  </div>
+  
+  <section class="hero" id="home">
+    <h1>🎮 Play Free Browser Games</h1>
+    <p>No downloads. No registration. Just click and play!</p>
+  </section>
+  
+  <div class="container" id="games">
+    <div class="categories">
+      <button class="cat-btn active" onclick="filterCategory('all')">All</button>
+      <button class="cat-btn" onclick="filterCategory('idle')">Idle</button>
+      <button class="cat-btn" onclick="filterCategory('action')">Action</button>
+      <button class="cat-btn" onclick="filterCategory('puzzle')">Puzzle</button>
+    </div>
+    
+    <h2 class="section-title"><span>🎯</span> Featured Games</h2>
+    <div class="games-grid" id="games-grid">
+      
+      <div class="game-card" data-category="idle" onclick="playGame('game/idle-factory/')">
+        <div class="game-thumb">
+          🏭
+          <span class="game-badge">HOT</span>
+          <span class="game-play">▶ Play</span>
+        </div>
+        <div class="game-info">
+          <div class="game-title">Idle Factory Tycoon</div>
+          <div class="game-desc">Build your factory empire! Click, upgrade, and discover 10 unique worlds.</div>
+          <div class="game-meta">
+            <span>🏭 Idle</span>
+            <span>⭐ 4.8</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="game-card">
+        <div class="game-thumb">
+          🎮
+        </div>
+        <div class="game-info">
+          <div class="game-title">More Games Coming</div>
+          <div class="game-desc">Exciting new games are on the way!</div>
+          <div class="game-meta">
+            <span>Coming Soon</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="game-card">
+        <div class="game-thumb">
+          🎯
+        </div>
+        <div class="game-info">
+          <div class="game-title">Another Game!</div>
+          <div class="game-desc">Stay tuned for something amazing.</div>
+          <div class="game-meta">
+            <span>Coming Soon</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="game-card">
+        <div class="game-thumb">
+          🎲
+        </div>
+        <div class="game-info">
+          <div class="game-title">Dice Quest</div>
+          <div class="game-desc">A thrilling dice adventure awaits!</div>
+          <div class="game-meta">
+            <span>Coming Soon</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <footer id="about">
+    <p>© 2026 DAGameCenter. All games are free to play!</p>
+    <p style="margin-top: 10px;">
+      <a href="mailto:contact@dagamecenter.com">Contact Us</a>
+    </p>
   </footer>
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2551267052794968" crossorigin="anonymous"></script>
+  
+  <!-- AdSense Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2551267052794968"
+     crossorigin="anonymous"></script>
+  
   <script>
-    try { (adsbygoogle = window.adsbygoogle || []).push({}) } catch(e) {}
-
-    function playGame(src, title) {
-      document.getElementById('gframe').src = src
-      document.getElementById('obar-title').textContent = title
-      document.getElementById('overlay').classList.add('on')
-      document.body.style.overflow = 'hidden'
+    // Initialize ads
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    
+    function playGame(gamePath) {
+      const container = document.getElementById('game-container');
+      const frame = document.getElementById('game-frame');
+      frame.src = gamePath;
+      container.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Reload ads
+      (adsbygoogle = window.adsbygoogle || []).push({});
     }
+    
     function closeGame() {
-      document.getElementById('overlay').classList.remove('on')
-      document.getElementById('gframe').src = ''
-      document.body.style.overflow = ''
+      const container = document.getElementById('game-container');
+      const frame = document.getElementById('game-frame');
+      frame.src = '';
+      container.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      closeRewardModal();
     }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGame() })
-
-    function filterCat(cat, btn) {
-      document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'))
-      btn.classList.add('on')
-      document.querySelectorAll('#grid [data-cat]').forEach(c => {
-        c.style.display = (cat === 'all' || c.dataset.cat.includes(cat)) ? '' : 'none'
-      })
+    
+    function showRewardModal() {
+      const modal = document.getElementById('reward-modal');
+      modal.classList.add('active');
     }
-
-    function doSearch(q) {
-      q = q.toLowerCase().trim()
-      document.querySelectorAll('#grid [data-cat]').forEach(c => {
-        const n = (c.querySelector('.gc-name') || c.querySelector('.promo-title') || {}).textContent || ''
-        c.style.display = (!q || n.toLowerCase().includes(q)) ? '' : 'none'
-      })
+    
+    function closeRewardModal() {
+      const modal = document.getElementById('reward-modal');
+      modal.classList.remove('active');
+    }
+    
+    function watchRewardedAd() {
+      // Show rewarded video ad
+      // Note: Rewarded ads require special setup in AdSense
+      // This will trigger an overlay ad
+      (adsbygoogle = window.adsbygoogle || []).push({
+        overlays: { bottom: { offset: '400px' } }
+      });
+      
+      closeRewardModal();
+      alert('🎉 Thanks for watching! Bonus unlocked!');
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeGame();
+        closeRewardModal();
+      }
+    });
+    
+    // Category filter
+    function filterCategory(cat) {
+      const cards = document.querySelectorAll('.game-card');
+      const btns = document.querySelectorAll('.cat-btn');
+      
+      btns.forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      cards.forEach(card => {
+        if (cat === 'all') {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     }
   </script>
 </body>
