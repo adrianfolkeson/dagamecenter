@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    { "source": "/game/idle-factory/(.*)", "destination": "/game/idle-factory/index.html" },
+    { "source": "/game/(.*)", "destination": "/game/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "ALLOWALL" }
+      ]
+    }
+  ]
+}
