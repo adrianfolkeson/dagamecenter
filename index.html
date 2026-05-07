@@ -1,159 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DA GAME CENTER</title>
-  <meta name="description" content="Play free browser games. New games added regularly." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAGameCenter</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: white;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    
+    h1 {
+      font-size: 3rem;
+      background: linear-gradient(90deg, #e94560, #ff6b6b, #ffd93d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: #888;
+    }
+    
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .game-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    
+    .game-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(233,69,96,0.3);
+    }
+    
+    .game-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #e94560, #533483);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+    
+    .game-info {
+      padding: 25px;
+    }
+    
+    .game-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .game-desc {
+      color: #888;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    
+    .play-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 30px;
+      background: linear-gradient(90deg, #e94560, #ff6b6b);
+      border-radius: 30px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: transform 0.3s;
+    }
+    
+    .play-btn:hover {
+      transform: scale(1.05);
+    }
+    
+    .coming-soon {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    
+    .coming-soon .play-btn {
+      background: #444;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 80px;
+      padding: 40px;
+      color: #666;
+    }
+    
+    footer a {
+      color: #e94560;
+      text-decoration: none;
+    }
+    
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      .games-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- ── HEADER ── -->
-  <header>
-    <div class="header-inner">
-      <div class="logo">
-        <span class="logo-da">DA</span>
-        <span class="logo-game">GAME</span>
-        <span class="logo-center">CENTER</span>
-      </div>
-      <nav>
-        <a href="#games">GAMES</a>
-        <a href="#about">ABOUT</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- ── HERO ── -->
-  <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="scanlines"></div>
-    <div class="hero-content">
-      <p class="hero-sub">FREE BROWSER GAMES</p>
-      <h1 class="hero-title">PLAY.<br/>EARN.<br/>REPEAT.</h1>
-      <p class="hero-desc">Idle clickers, strategy & more — no download, no login.</p>
-      <a href="#games" class="btn-primary">PLAY NOW ▶</a>
-    </div>
-    <div class="hero-pixels">
-      <div class="pixel p1"></div>
-      <div class="pixel p2"></div>
-      <div class="pixel p3"></div>
-      <div class="pixel p4"></div>
-      <div class="pixel p5"></div>
-    </div>
-  </section>
-
-  <!-- ── TICKER ── -->
-  <div class="ticker">
-    <div class="ticker-inner">
-      <span>★ IDLE FACTORY TYCOON</span>
-      <span>★ 10 UNIQUE WORLDS</span>
-      <span>★ 47 ACHIEVEMENTS</span>
-      <span>★ PRESTIGE SYSTEM</span>
-      <span>★ FREE TO PLAY</span>
-      <span>★ IDLE FACTORY TYCOON</span>
-      <span>★ 10 UNIQUE WORLDS</span>
-      <span>★ 47 ACHIEVEMENTS</span>
-      <span>★ PRESTIGE SYSTEM</span>
-      <span>★ FREE TO PLAY</span>
-    </div>
-  </div>
-
-  <!-- ── GAMES GRID ── -->
-  <section class="games" id="games">
-    <h2 class="section-title">GAMES</h2>
-
-    <!-- Idle Factory Tycoon -->
+  <div class="container">
+    <header>
+      <h1>DAGameCenter</h1>
+      <p class="subtitle">🎮 Free browser games - Play anytime, anywhere!</p>
+    </header>
+    
     <div class="games-grid">
-      <article class="game-card featured">
-        <div class="card-badge">HOT</div>
-        <div class="card-art">
-          <div class="factory-art">
-            <div class="factory-chimney c1"></div>
-            <div class="factory-chimney c2"></div>
-            <div class="factory-body">
-              <div class="factory-window"></div>
-              <div class="factory-window"></div>
-              <div class="factory-window"></div>
-              <div class="factory-window"></div>
+      <div class="game-card">
+        <a href="game/idle-factory/" style="text-decoration: none; color: inherit;">
+          <div class="game-image">🏭</div>
+          <div class="game-info">
+            <div class="game-title">Idle Factory Tycoon</div>
+            <div class="game-desc">
+              Build your factory empire! Click, upgrade, and discover 10 unique worlds. 
+              Can you become the richest tycoon?
             </div>
-            <div class="factory-door"></div>
-            <div class="factory-gear"></div>
-            <div class="bosse-figure">
-              <div class="bosse-hat"></div>
-              <div class="bosse-head"></div>
-              <div class="bosse-body"></div>
-            </div>
+            <span class="play-btn">▶ Play Now</span>
           </div>
-        </div>
-        <div class="card-info">
-          <div class="card-tags">
-            <span class="tag">IDLE</span>
-            <span class="tag">CLICKER</span>
-            <span class="tag">STRATEGY</span>
+        </a>
+      </div>
+      
+      <div class="game-card coming-soon">
+        <div class="game-image">🎮</div>
+        <div class="game-info">
+          <div class="game-title">More Games Coming Soon!</div>
+          <div class="game-desc">
+            We're working on exciting new games. Stay tuned for updates!
           </div>
-          <h3 class="card-title">IDLE FACTORY TYCOON</h3>
-          <p class="card-desc">
-            Build your factory empire from rusty workshop to cyberpunk megacorp.
-            10 worlds, 47 achievements, prestige system.
-          </p>
-          <div class="card-stats">
-            <span>🏭 10 Worlds</span>
-            <span>🏆 47 Achievements</span>
-            <span>♾ Prestige</span>
+          <span class="play-btn">Coming Soon</span>
+        </div>
+      </div>
+      
+      <div class="game-card coming-soon">
+        <div class="game-image">🎯</div>
+        <div class="game-info">
+          <div class="game-title">Another Game!</div>
+          <div class="game-desc">
+            Something exciting is in the works. Check back soon!
           </div>
-          <a href="game/idle-factory/" class="btn-play">▶ PLAY FREE</a>
+          <span class="play-btn">Coming Soon</span>
         </div>
-      </article>
-
-      <!-- Coming soon slots -->
-      <article class="game-card coming-soon">
-        <div class="card-art coming-art">
-          <span class="coming-icon">?</span>
-        </div>
-        <div class="card-info">
-          <h3 class="card-title dim">COMING SOON</h3>
-          <p class="card-desc dim">New game in development...</p>
-        </div>
-      </article>
-
-      <article class="game-card coming-soon">
-        <div class="card-art coming-art">
-          <span class="coming-icon">?</span>
-        </div>
-        <div class="card-info">
-          <h3 class="card-title dim">COMING SOON</h3>
-          <p class="card-desc dim">New game in development...</p>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- ── ABOUT ── -->
-  <section class="about" id="about">
-    <div class="about-inner">
-      <h2 class="section-title">ABOUT</h2>
-      <p>DA GAME CENTER is an independent game studio making free browser games. No ads during gameplay. No pay-to-win. Just fun.</p>
-      <div class="about-stats">
-        <div class="stat-box"><span class="stat-num">1</span><span class="stat-label">GAME</span></div>
-        <div class="stat-box"><span class="stat-num">10</span><span class="stat-label">WORLDS</span></div>
-        <div class="stat-box"><span class="stat-num">∞</span><span class="stat-label">HOURS</span></div>
       </div>
     </div>
-  </section>
-
-  <!-- ── FOOTER ── -->
-  <footer>
-    <p class="footer-logo">DA GAME CENTER</p>
-    <p class="footer-copy">© 2026 dagamecenter.com — All rights reserved</p>
-    <div class="footer-links">
-      <a href="privacy.html">Privacy Policy</a>
-    </div>
-  </footer>
-
-  <script src="main.js"></script>
+    
+    <footer>
+      <p>© 2026 DAGameCenter. Built with ❤️</p>
+      <p>Want your game here? <a href="mailto:contact@dagamecenter.com">Contact us!</a></p>
+    </footer>
+  </div>
 </body>
 </html>
