@@ -18,6 +18,14 @@
       min-height: 100vh;
     }
     
+    /* Ad Banner Top */
+    .ad-banner-top {
+      background: #1a1a2e;
+      padding: 10px;
+      text-align: center;
+      min-height: 90px;
+    }
+    
     /* Header */
     header {
       background: linear-gradient(90deg, #e94560, #ff6b6b);
@@ -73,26 +81,6 @@
       margin-bottom: 30px;
     }
     
-    .search-bar {
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    
-    .search-bar input {
-      width: 100%;
-      padding: 15px 25px;
-      border-radius: 30px;
-      border: none;
-      font-size: 1rem;
-      background: rgba(255,255,255,0.1);
-      color: white;
-      outline: none;
-    }
-    
-    .search-bar input::placeholder {
-      color: #666;
-    }
-    
     /* Game Container (for iframe) */
     #game-container {
       display: none;
@@ -111,8 +99,12 @@
     
     #game-frame {
       width: 100%;
-      height: calc(100% - 50px);
+      height: calc(100% - 90px);
       border: none;
+    }
+    
+    #game-container.active .ad-banner-bottom {
+      display: block;
     }
     
     .close-game {
@@ -128,8 +120,21 @@
       font-size: 1rem;
     }
     
-    .close-game:hover {
-      background: #ff6b6b;
+    /* Ad Banner Bottom */
+    .ad-banner-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1a1a2e;
+      padding: 10px;
+      text-align: center;
+      min-height: 90px;
+      display: none;
+    }
+    
+    #game-container.active .ad-banner-bottom {
+      display: block;
     }
     
     /* Game Grid */
@@ -257,17 +262,6 @@
       border-color: #e94560;
     }
     
-    /* Coming Soon */
-    .coming-soon .game-thumb {
-      opacity: 0.5;
-    }
-    
-    .coming-soon .game-title::after {
-      content: ' (Coming Soon)';
-      font-size: 0.8rem;
-      color: #666;
-    }
-    
     /* Footer */
     footer {
       background: #0d0d15;
@@ -288,6 +282,17 @@
   </style>
 </head>
 <body>
+  
+  <!-- Ad Banner Top -->
+  <div class="ad-banner-top">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-2551267052794968"
+         data-ad-slot="YOUR_AD_SLOT_ID_TOP"
+         data-ad-format="horizontal"
+         data-full-width-responsive="true"></ins>
+  </div>
+  
   <header>
     <div class="logo">DA<span>Game</span>Center</div>
     <nav>
@@ -301,14 +306,21 @@
   <div id="game-container">
     <iframe id="game-frame" src=""></iframe>
     <button class="close-game" onclick="closeGame()">✕ Close Game</button>
+    
+    <!-- Ad Banner Bottom (shown when playing) -->
+    <div class="ad-banner-bottom">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-2551267052794968"
+           data-ad-slot="YOUR_AD_SLOT_ID_BOTTOM"
+           data-ad-format="horizontal"
+           data-full-width-responsive="true"></ins>
+    </div>
   </div>
   
   <section class="hero" id="home">
     <h1>🎮 Play Free Browser Games</h1>
     <p>No downloads. No registration. Just click and play!</p>
-    <div class="search-bar">
-      <input type="text" placeholder="Search games..." onkeyup="filterGames(this.value)">
-    </div>
   </section>
   
   <div class="container" id="games">
@@ -338,7 +350,7 @@
         </div>
       </div>
       
-      <div class="game-card coming-soon">
+      <div class="game-card">
         <div class="game-thumb">
           🎮
         </div>
@@ -351,7 +363,7 @@
         </div>
       </div>
       
-      <div class="game-card coming-soon">
+      <div class="game-card">
         <div class="game-thumb">
           🎯
         </div>
@@ -364,7 +376,7 @@
         </div>
       </div>
       
-      <div class="game-card coming-soon">
+      <div class="game-card">
         <div class="game-thumb">
           🎲
         </div>
@@ -387,13 +399,23 @@
     </p>
   </footer>
   
+  <!-- AdSense Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2551267052794968"
+     crossorigin="anonymous"></script>
+  
   <script>
+    // Initialize ads
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    
     function playGame(gamePath) {
       const container = document.getElementById('game-container');
       const frame = document.getElementById('game-frame');
       frame.src = gamePath;
       container.classList.add('active');
       document.body.style.overflow = 'hidden';
+      
+      // Reload ads when game starts
+      (adsbygoogle = window.adsbygoogle || []).push({});
     }
     
     function closeGame() {
@@ -418,24 +440,7 @@
       event.target.classList.add('active');
       
       cards.forEach(card => {
-        if (cat === 'all' || card.dataset.category === cat) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-    
-    // Search filter
-    function filterGames(query) {
-      const cards = document.querySelectorAll('.game-card');
-      query = query.toLowerCase();
-      
-      cards.forEach(card => {
-        const title = card.querySelector('.game-title').textContent.toLowerCase();
-        const desc = card.querySelector('.game-desc').textContent.toLowerCase();
-        
-        if (title.includes(query) || desc.includes(query)) {
+        if (cat === 'all') {
           card.style.display = 'block';
         } else {
           card.style.display = 'none';
