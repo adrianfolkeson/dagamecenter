@@ -1,447 +1,588 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DAGameCenter - Free Browser Games</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DA Game Center — Free Browser Games</title>
+  <meta name="description" content="Play free browser games. No download. No login. Just play." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0a0f;
+      --surface:  #111118;
+      --card:     #13131c;
+      --border:   rgba(255,255,255,0.06);
+      --accent:   #e94560;
+      --accent2:  #ff6b82;
+      --text:     #ffffff;
+      --muted:    rgba(255,255,255,0.45);
+      --faint:    rgba(255,255,255,0.08);
     }
-    
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0a0a0f;
-      color: white;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
-    
-    /* Header */
-    header {
-      background: linear-gradient(90deg, #e94560, #ff6b6b);
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-    }
-    
-    .logo span {
-      color: #ffd700;
-    }
-    
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 25px;
-      font-size: 1rem;
-      opacity: 0.9;
-    }
-    
-    nav a:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-    
-    /* Hero */
-    .hero {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      padding: 60px 30px;
-      text-align: center;
-    }
-    
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 15px;
-      background: linear-gradient(90deg, #fff, #ffd700);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    
-    .hero p {
-      color: #888;
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-    }
-    
-    .search-bar {
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    
-    .search-bar input {
-      width: 100%;
-      padding: 15px 25px;
-      border-radius: 30px;
-      border: none;
-      font-size: 1rem;
-      background: rgba(255,255,255,0.1);
-      color: white;
-      outline: none;
-    }
-    
-    .search-bar input::placeholder {
-      color: #666;
-    }
-    
-    /* Game Container (for iframe) */
-    #game-container {
+
+    /* ── GAME OVERLAY ── */
+    #game-overlay {
       display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      position: fixed; inset: 0;
       background: #000;
-      z-index: 200;
+      z-index: 9999;
+      flex-direction: column;
     }
-    
-    #game-container.active {
-      display: block;
+    #game-overlay.active { display: flex; }
+    #game-bar {
+      height: 52px;
+      background: #0d0d14;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      flex-shrink: 0;
     }
-    
+    #game-title-bar {
+      font-weight: 600;
+      font-size: 14px;
+      flex: 1;
+      color: var(--muted);
+    }
     #game-frame {
-      width: 100%;
-      height: calc(100% - 50px);
+      flex: 1;
       border: none;
-    }
-    
-    .close-game {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      background: #e94560;
-      color: white;
-      border: none;
-      padding: 10px 25px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    
-    .close-game:hover {
-      background: #ff6b6b;
-    }
-    
-    /* Game Grid */
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-    
-    .section-title {
-      font-size: 1.8rem;
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .section-title span {
-      font-size: 2rem;
-    }
-    
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 25px;
-      margin-bottom: 50px;
-    }
-    
-    .game-card {
-      background: #16162a;
-      border-radius: 15px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    
-    .game-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 40px rgba(233,69,96,0.3);
-    }
-    
-    .game-thumb {
       width: 100%;
-      height: 180px;
-      background: linear-gradient(135deg, #e94560, #533483);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4rem;
+    }
+    .btn-close {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-close:hover { background: var(--accent2); }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 32px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-size: 18px; font-weight: 800; letter-spacing: -0.5px;
+      text-decoration: none; color: var(--text);
+    }
+    .logo em { color: var(--accent); font-style: normal; }
+    nav { display: flex; gap: 4px; }
+    nav a {
+      color: var(--muted); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      padding: 6px 14px; border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+    nav a:hover { color: var(--text); background: var(--faint); }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 1200px; margin: 0 auto;
+      padding: 100px 32px 80px;
       position: relative;
     }
-    
-    .game-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #ffd700;
-      color: #000;
-      padding: 5px 12px;
-      border-radius: 15px;
-      font-size: 0.75rem;
-      font-weight: bold;
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(233,69,96,0.12);
+      border: 1px solid rgba(233,69,96,0.25);
+      color: var(--accent);
+      font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+      padding: 6px 14px; border-radius: 100px;
+      margin-bottom: 28px;
     }
-    
-    .game-play {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.7);
-      padding: 8px 20px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      opacity: 0;
-      transition: opacity 0.3s;
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      animation: pulse-dot 2s infinite;
     }
-    
-    .game-card:hover .game-play {
-      opacity: 1;
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:0.5; transform:scale(0.8); }
     }
-    
-    .game-info {
-      padding: 20px;
+    .hero h1 {
+      font-size: clamp(40px, 6vw, 80px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      max-width: 720px;
+      margin-bottom: 24px;
     }
-    
-    .game-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 8px;
+    .hero h1 span { color: var(--accent); }
+    .hero-sub {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+      max-width: 480px;
+      margin-bottom: 44px;
+      font-weight: 400;
     }
-    
-    .game-desc {
-      color: #666;
-      font-size: 0.9rem;
-      line-height: 1.5;
+    .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 0 0 0 rgba(233,69,96,0.4);
     }
-    
-    .game-meta {
-      display: flex;
-      gap: 15px;
-      margin-top: 15px;
-      color: #888;
-      font-size: 0.85rem;
+    .btn-primary:hover {
+      background: var(--accent2);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(233,69,96,0.35);
     }
-    
-    /* Categories */
-    .categories {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
+    .btn-ghost {
+      color: var(--muted); font-size: 14px; font-weight: 500;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 14px 4px;
+      transition: color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--text); }
+    .hero-stats {
+      display: flex; gap: 36px; margin-top: 60px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
       flex-wrap: wrap;
     }
-    
-    .cat-btn {
-      background: #1a1a2e;
-      border: 1px solid #333;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 20px;
+    .hero-stat {}
+    .hero-stat strong {
+      display: block;
+      font-size: 28px; font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+    .hero-stat span { font-size: 13px; color: var(--muted); font-weight: 400; }
+
+    /* ── SECTION ── */
+    .section {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 32px 80px;
+    }
+    .section-head {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .section-head h2 {
+      font-size: 22px; font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    /* ── GAMES GRID ── */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    /* ── GAME CARD ── */
+    .game-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
       cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .cat-btn:hover, .cat-btn.active {
-      background: #e94560;
-      border-color: #e94560;
-    }
-    
-    /* Coming Soon */
-    .coming-soon .game-thumb {
-      opacity: 0.5;
-    }
-    
-    .coming-soon .game-title::after {
-      content: ' (Coming Soon)';
-      font-size: 0.8rem;
-      color: #666;
-    }
-    
-    /* Footer */
-    footer {
-      background: #0d0d15;
-      padding: 40px 20px;
-      text-align: center;
-      color: #666;
-    }
-    
-    footer a {
-      color: #e94560;
+      transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s, border-color 0.25s;
       text-decoration: none;
+      color: inherit;
+      display: block;
     }
-    
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 2rem; }
-      .games-grid { grid-template-columns: 1fr 1fr; }
+    .game-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(233,69,96,0.2);
+      border-color: rgba(233,69,96,0.2);
+    }
+    .card-thumb {
+      height: 200px;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* Factory art in CSS */
+    .thumb-factory {
+      width: 100%; height: 100%;
+      background: linear-gradient(160deg, #1a1208 0%, #0d0904 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .tf-building {
+      width: 110px; height: 70px;
+      background: #3a2810;
+      border-radius: 3px;
+      position: absolute; bottom: 30px;
+      display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-around;
+      padding: 10px 6px 6px;
+      gap: 4px;
+    }
+    .tf-window {
+      width: 22px; height: 18px;
+      background: #C4A000;
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(196,160,0,0.7);
+      animation: wglow 2s ease-in-out infinite alternate;
+    }
+    .tf-window:nth-child(2) { animation-delay: -.7s; }
+    .tf-window:nth-child(3) { animation-delay: -1.3s; }
+    .tf-window:nth-child(4) { animation-delay: -.3s; }
+    @keyframes wglow { from{opacity:.6} to{opacity:1} }
+    .tf-chimney {
+      position: absolute; bottom: 100px; left: 22px;
+      width: 14px; height: 44px;
+      background: #2a1808; border-radius: 2px 2px 0 0;
+    }
+    .tf-chimney2 { left: 44px; height: 36px; }
+    .tf-smoke {
+      position: absolute; border-radius: 50%;
+      background: rgba(180,180,160,0.3);
+      animation: smokerise 2s ease-out infinite;
+    }
+    .ts1 { width:10px;height:10px; bottom:148px; left:26px; animation-delay:0s; }
+    .ts2 { width:8px;height:8px;   bottom:146px; left:47px; animation-delay:-.8s; }
+    @keyframes smokerise {
+      0%   { transform:translateY(0) scale(1);   opacity:.4; }
+      100% { transform:translateY(-30px) scale(2.5); opacity:0; }
+    }
+    .tf-gear {
+      position: absolute; bottom: 22px; right: 18px;
+      width: 32px; height: 32px;
+      border: 5px solid rgba(196,160,0,0.6);
+      border-radius: 50%;
+      animation: spin 4s linear infinite;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .card-play-btn {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+      background: rgba(0,0,0,0.5);
+    }
+    .game-card:hover .card-play-btn { opacity: 1; }
+    .play-circle {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 30px rgba(233,69,96,0.5);
+      transform: scale(0.8); transition: transform 0.2s;
+    }
+    .game-card:hover .play-circle { transform: scale(1); }
+
+    .card-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: var(--accent); color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 3px 10px; border-radius: 100px;
+      letter-spacing: 0.5px;
+    }
+    .card-body { padding: 20px 20px 22px; }
+    .card-tags { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+    .card-tag {
+      background: var(--faint); color: var(--muted);
+      font-size: 11px; font-weight: 500;
+      padding: 3px 9px; border-radius: 6px;
+    }
+    .card-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.2px; }
+    .card-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+    .card-meta  { display:flex; gap:16px; }
+    .card-meta-item { font-size: 12px; color: var(--muted); display:flex; align-items:center; gap:5px; }
+    .card-meta-dot  { width:4px;height:4px;border-radius:50%;background:var(--accent); }
+
+    /* Coming soon card */
+    .card-coming .card-thumb { background: #0d0d14; }
+    .card-coming .card-thumb-inner {
+      width: 64px; height: 64px; border-radius: 50%;
+      border: 2px dashed rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.15); font-size: 28px;
+    }
+    .card-coming .card-title { color: rgba(255,255,255,0.25); }
+    .card-coming .card-desc  { color: rgba(255,255,255,0.12); }
+
+    /* ── BANNER AD ── */
+    .ad-banner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 32px 48px;
+    }
+    .ad-banner-inner {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      min-height: 90px;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.1);
+      font-size: 11px; letter-spacing: 1px;
+      overflow: hidden;
+    }
+
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .about-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 64px 32px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+      align-items: center;
+    }
+    @media(max-width:720px) { .about-inner { grid-template-columns:1fr; } }
+    .about-inner h2 {
+      font-size: 32px; font-weight: 800;
+      letter-spacing: -0.5px; margin-bottom: 16px;
+    }
+    .about-inner p { color: var(--muted); line-height: 1.8; font-size: 15px; }
+    .about-features { display: flex; flex-direction: column; gap: 16px; }
+    .about-feature {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px; background: var(--faint);
+      border-radius: 12px;
+    }
+    .af-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      background: rgba(233,69,96,0.15); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .af-text strong { display:block; font-size:14px; font-weight:600; margin-bottom:3px; }
+    .af-text span   { font-size:13px; color:var(--muted); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .footer-logo { font-weight: 700; font-size: 15px; }
+    .footer-logo em { color: var(--accent); font-style: normal; }
+    footer p { color: var(--muted); font-size: 13px; }
+    footer a { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+    footer a:hover { color: var(--text); }
+
+    /* ── UTILITIES ── */
+    @media(max-width:600px) {
+      .hero { padding: 64px 20px 48px; }
+      .hero h1 { font-size: 36px; letter-spacing: -1px; }
+      .section { padding: 0 20px 60px; }
+      .games-grid { grid-template-columns: 1fr; }
+      .header-inner { padding: 0 20px; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">DA<span>Game</span>Center</div>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#games">Games</a>
-      <a href="#about">About</a>
-    </nav>
-  </header>
-  
-  <!-- Game Player -->
-  <div id="game-container">
-    <iframe id="game-frame" src=""></iframe>
-    <button class="close-game" onclick="closeGame()">✕ Close Game</button>
+
+  <!-- ── GAME OVERLAY ── -->
+  <div id="game-overlay">
+    <div id="game-bar">
+      <span id="game-title-bar">Playing game...</span>
+      <button class="btn-close" onclick="closeGame()">✕ Close</button>
+    </div>
+    <iframe id="game-frame" src="" allowfullscreen></iframe>
   </div>
-  
-  <section class="hero" id="home">
-    <h1>🎮 Play Free Browser Games</h1>
-    <p>No downloads. No registration. Just click and play!</p>
-    <div class="search-bar">
-      <input type="text" placeholder="Search games..." onkeyup="filterGames(this.value)">
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="header-inner">
+      <a href="#" class="logo">DA<em>Game</em>Center</a>
+      <nav>
+        <a href="#games">Games</a>
+        <a href="#about">About</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-eyebrow">Free to play — no downloads</div>
+    <h1>Games that are<br/><span>actually fun.</span></h1>
+    <p class="hero-sub">Browser games crafted with care. No ads during gameplay, no login required. Just open and play.</p>
+    <div class="hero-cta">
+      <a href="#games" class="btn-primary">Browse Games →</a>
+      <a href="#about" class="btn-ghost">How it works ↓</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>1</strong><span>Game available</span></div>
+      <div class="hero-stat"><strong>10</strong><span>Unique worlds</span></div>
+      <div class="hero-stat"><strong>Free</strong><span>Always</span></div>
     </div>
   </section>
-  
-  <div class="container" id="games">
-    <div class="categories">
-      <button class="cat-btn active" onclick="filterCategory('all')">All</button>
-      <button class="cat-btn" onclick="filterCategory('idle')">Idle</button>
-      <button class="cat-btn" onclick="filterCategory('action')">Action</button>
-      <button class="cat-btn" onclick="filterCategory('puzzle')">Puzzle</button>
-    </div>
-    
-    <h2 class="section-title"><span>🎯</span> Featured Games</h2>
-    <div class="games-grid" id="games-grid">
-      
-      <div class="game-card" data-category="idle" onclick="playGame('game/idle-factory/')">
-        <div class="game-thumb">
-          🏭
-          <span class="game-badge">HOT</span>
-          <span class="game-play">▶ Play</span>
-        </div>
-        <div class="game-info">
-          <div class="game-title">Idle Factory Tycoon</div>
-          <div class="game-desc">Build your factory empire! Click, upgrade, and discover 10 unique worlds.</div>
-          <div class="game-meta">
-            <span>🏭 Idle</span>
-            <span>⭐ 4.8</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="game-card coming-soon">
-        <div class="game-thumb">
-          🎮
-        </div>
-        <div class="game-info">
-          <div class="game-title">More Games Coming</div>
-          <div class="game-desc">Exciting new games are on the way!</div>
-          <div class="game-meta">
-            <span>Coming Soon</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="game-card coming-soon">
-        <div class="game-thumb">
-          🎯
-        </div>
-        <div class="game-info">
-          <div class="game-title">Another Game!</div>
-          <div class="game-desc">Stay tuned for something amazing.</div>
-          <div class="game-meta">
-            <span>Coming Soon</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="game-card coming-soon">
-        <div class="game-thumb">
-          🎲
-        </div>
-        <div class="game-info">
-          <div class="game-title">Dice Quest</div>
-          <div class="game-desc">A thrilling dice adventure awaits!</div>
-          <div class="game-meta">
-            <span>Coming Soon</span>
-          </div>
-        </div>
-      </div>
-      
+
+  <!-- ── AD BANNER ── -->
+  <div class="ad-banner">
+    <div class="ad-banner-inner">
+      <ins class="adsbygoogle"
+        style="display:block;width:100%;min-height:90px"
+        data-ad-client="ca-pub-2551267052794968"
+        data-ad-slot="8553436140"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
     </div>
   </div>
-  
-  <footer id="about">
-    <p>© 2026 DAGameCenter. All games are free to play!</p>
-    <p style="margin-top: 10px;">
-      <a href="mailto:contact@dagamecenter.com">Contact Us</a>
-    </p>
+
+  <!-- ── GAMES ── -->
+  <section class="section" id="games">
+    <div class="section-head">
+      <h2>All Games</h2>
+    </div>
+    <div class="games-grid">
+
+      <!-- Idle Factory Tycoon -->
+      <a class="game-card" onclick="playGame('game/idle-factory/','Idle Factory Tycoon'); return false;" href="#">
+        <div class="card-thumb">
+          <div class="thumb-factory">
+            <div class="tf-chimney"></div>
+            <div class="tf-chimney tf-chimney2"></div>
+            <div class="tf-smoke ts1"></div>
+            <div class="tf-smoke ts2"></div>
+            <div class="tf-building">
+              <div class="tf-window"></div>
+              <div class="tf-window"></div>
+              <div class="tf-window"></div>
+              <div class="tf-window"></div>
+            </div>
+            <div class="tf-gear"></div>
+          </div>
+          <div class="card-play-btn"><div class="play-circle">▶</div></div>
+          <div class="card-badge">NEW</div>
+        </div>
+        <div class="card-body">
+          <div class="card-tags">
+            <span class="card-tag">Idle</span>
+            <span class="card-tag">Clicker</span>
+            <span class="card-tag">Strategy</span>
+          </div>
+          <div class="card-title">Idle Factory Tycoon</div>
+          <div class="card-desc">Build your factory empire from a rusty workshop to a cyberpunk megacorp. 10 worlds, 47 achievements, prestige system.</div>
+          <div class="card-meta">
+            <div class="card-meta-item"><div class="card-meta-dot"></div>10 Worlds</div>
+            <div class="card-meta-item"><div class="card-meta-dot"></div>Free</div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Coming soon 1 -->
+      <div class="game-card card-coming">
+        <div class="card-thumb">
+          <div class="card-thumb-inner">+</div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Coming Soon</div>
+          <div class="card-desc">A new game is in development. Stay tuned.</div>
+        </div>
+      </div>
+
+      <!-- Coming soon 2 -->
+      <div class="game-card card-coming">
+        <div class="card-thumb">
+          <div class="card-thumb-inner">+</div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Coming Soon</div>
+          <div class="card-desc">More games are on the way.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <div class="about-strip" id="about">
+    <div class="about-inner">
+      <div>
+        <h2>Made for players,<br/>not advertisers.</h2>
+        <p>DA Game Center is an independent game studio. We make games that are genuinely fun to play — clean, polished, and free. No pay-to-win, no dark patterns.</p>
+      </div>
+      <div class="about-features">
+        <div class="about-feature">
+          <div class="af-icon">⚡</div>
+          <div class="af-text">
+            <strong>Instant play</strong>
+            <span>Click and play in seconds. No download, no account.</span>
+          </div>
+        </div>
+        <div class="about-feature">
+          <div class="af-icon">🎮</div>
+          <div class="af-text">
+            <strong>Real games</strong>
+            <span>Crafted with care. Hours of content, not minutes.</span>
+          </div>
+        </div>
+        <div class="about-feature">
+          <div class="af-icon">🔒</div>
+          <div class="af-text">
+            <strong>Privacy first</strong>
+            <span>Game data stays on your device. We don't track you.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-logo">DA<em>Game</em>Center</div>
+    <p>© 2026 dagamecenter.com</p>
+    <a href="privacy.html">Privacy Policy</a>
   </footer>
-  
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2551267052794968" crossorigin="anonymous"></script>
   <script>
-    function playGame(gamePath) {
-      const container = document.getElementById('game-container');
-      const frame = document.getElementById('game-frame');
-      frame.src = gamePath;
-      container.classList.add('active');
-      document.body.style.overflow = 'hidden';
+    (adsbygoogle = window.adsbygoogle || []).push({});
+
+    function playGame(src, title) {
+      document.getElementById('game-frame').src = src
+      document.getElementById('game-title-bar').textContent = title || 'Game'
+      document.getElementById('game-overlay').classList.add('active')
+      document.body.style.overflow = 'hidden'
     }
-    
+
     function closeGame() {
-      const container = document.getElementById('game-container');
-      const frame = document.getElementById('game-frame');
-      frame.src = '';
-      container.classList.remove('active');
-      document.body.style.overflow = 'auto';
+      document.getElementById('game-overlay').classList.remove('active')
+      document.getElementById('game-frame').src = ''
+      document.body.style.overflow = ''
     }
-    
-    // Close on Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeGame();
-    });
-    
-    // Category filter
-    function filterCategory(cat) {
-      const cards = document.querySelectorAll('.game-card');
-      const btns = document.querySelectorAll('.cat-btn');
-      
-      btns.forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
-      
-      cards.forEach(card => {
-        if (cat === 'all' || card.dataset.category === cat) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-    
-    // Search filter
-    function filterGames(query) {
-      const cards = document.querySelectorAll('.game-card');
-      query = query.toLowerCase();
-      
-      cards.forEach(card => {
-        const title = card.querySelector('.game-title').textContent.toLowerCase();
-        const desc = card.querySelector('.game-desc').textContent.toLowerCase();
-        
-        if (title.includes(query) || desc.includes(query)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
+
+    // Close on Escape
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGame() })
   </script>
 </body>
 </html>
