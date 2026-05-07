@@ -1,570 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DAGameCenter - Free Browser Games</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0a0a0f;
-      color: white;
-      min-height: 100vh;
-    }
-    
-    /* Ad Banner Top */
-    .ad-banner-top {
-      background: #1a1a2e;
-      padding: 10px;
-      text-align: center;
-      min-height: 90px;
-    }
-    
-    /* Header */
-    header {
-      background: linear-gradient(90deg, #e94560, #ff6b6b);
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-    }
-    
-    .logo span {
-      color: #ffd700;
-    }
-    
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 25px;
-      font-size: 1rem;
-      opacity: 0.9;
-    }
-    
-    nav a:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-    
-    /* Hero */
-    .hero {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      padding: 60px 30px;
-      text-align: center;
-    }
-    
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 15px;
-      background: linear-gradient(90deg, #fff, #ffd700);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    
-    .hero p {
-      color: #888;
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-    }
-    
-    /* Game Container */
-    #game-container {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      z-index: 200;
-    }
-    
-    #game-container.active {
-      display: block;
-    }
-    
-    #game-frame {
-      width: 100%;
-      height: calc(100% - 180px);
-      border: none;
-    }
-    
-    .game-controls {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #1a1a2e;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .close-game {
-      background: #e94560;
-      color: white;
-      border: none;
-      padding: 10px 25px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    
-    .reward-btn {
-      background: linear-gradient(90deg, #ffd700, #ff8c00);
-      color: #000;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .reward-btn:hover {
-      transform: scale(1.05);
-    }
-    
-    /* Ad Banner Bottom */
-    .ad-banner-bottom {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #1a1a2e;
-      padding: 10px;
-      text-align: center;
-      min-height: 90px;
-    }
-    
-    /* Reward Modal */
-    #reward-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.9);
-      z-index: 300;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    #reward-modal.active {
-      display: flex;
-    }
-    
-    .reward-modal-content {
-      background: #1a1a2e;
-      padding: 40px;
-      border-radius: 20px;
-      text-align: center;
-      max-width: 400px;
-    }
-    
-    .reward-modal-content h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: #ffd700;
-    }
-    
-    .reward-modal-content p {
-      color: #888;
-      margin-bottom: 25px;
-    }
-    
-    .watch-ad-btn {
-      background: linear-gradient(90deg, #e94560, #ff6b6b);
-      color: white;
-      border: none;
-      padding: 15px 40px;
-      border-radius: 30px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      margin-bottom: 15px;
-    }
-    
-    .cancel-btn {
-      background: transparent;
-      border: 1px solid #666;
-      color: #888;
-      padding: 10px 30px;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-    
-    /* Game Grid */
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-    
-    .section-title {
-      font-size: 1.8rem;
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .section-title span {
-      font-size: 2rem;
-    }
-    
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 25px;
-    }
-    
-    .game-card {
-      background: #16162a;
-      border-radius: 15px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    
-    .game-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 40px rgba(233,69,96,0.3);
-    }
-    
-    .game-thumb {
-      width: 100%;
-      height: 180px;
-      background: linear-gradient(135deg, #e94560, #533483);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4rem;
-      position: relative;
-    }
-    
-    .game-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #ffd700;
-      color: #000;
-      padding: 5px 12px;
-      border-radius: 15px;
-      font-size: 0.75rem;
-      font-weight: bold;
-    }
-    
-    .game-play {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.7);
-      padding: 8px 20px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    
-    .game-card:hover .game-play {
-      opacity: 1;
-    }
-    
-    .game-info {
-      padding: 20px;
-    }
-    
-    .game-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-    
-    .game-desc {
-      color: #666;
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-    
-    .game-meta {
-      display: flex;
-      gap: 15px;
-      margin-top: 15px;
-      color: #888;
-      font-size: 0.85rem;
-    }
-    
-    /* Categories */
-    .categories {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-    
-    .cat-btn {
-      background: #1a1a2e;
-      border: 1px solid #333;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .cat-btn:hover, .cat-btn.active {
-      background: #e94560;
-      border-color: #e94560;
-    }
-    
-    /* Footer */
-    footer {
-      background: #0d0d15;
-      padding: 40px 20px;
-      text-align: center;
-      color: #666;
-    }
-    
-    footer a {
-      color: #e94560;
-      text-decoration: none;
-    }
-    
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 2rem; }
-      .games-grid { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#08080e"/>
+<title>DA Game Center — Free Online Games</title>
+<meta name="description" content="Free browser games. No downloads. No logins. Click and play."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  
-  <!-- Ad Banner Top -->
-  <div class="ad-banner-top">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-2551267052794968"
-         data-ad-slot="YOUR_TOP_AD_SLOT"
-         data-ad-format="horizontal"
-         data-full-width-responsive="true"></ins>
+<div id="overlay">
+  <div id="obar">
+    <span id="obar-title">Loading…</span>
+    <button class="close-btn" onclick="closeGame()">✕ Close</button>
   </div>
-  
-  <header>
-    <div class="logo">DA<span>Game</span>Center</div>
-    <nav>
-      <a href="#home">Home</a>
+  <iframe id="gframe" src="" allowfullscreen></iframe>
+</div>
+<header>
+  <div class="hdr">
+    <a href="#" class="logo">DA<b>Game</b>Center</a>
+    <nav class="hdr-nav">
       <a href="#games">Games</a>
       <a href="#about">About</a>
+      <a href="privacy.html">Privacy</a>
     </nav>
-  </header>
-  
-  <!-- Game Player -->
-  <div id="game-container">
-    <div class="game-controls">
-      <button class="close-game" onclick="closeGame()">✕ Close Game</button>
-      <button class="reward-btn" onclick="showRewardModal()">
-        🎁 Watch Ad for Bonus!
-      </button>
-    </div>
-    <iframe id="game-frame" src=""></iframe>
-    
-    <!-- Ad Banner Bottom -->
-    <div class="ad-banner-bottom">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-2551267052794968"
-           data-ad-slot="YOUR_BOTTOM_AD_SLOT"
-           data-ad-format="horizontal"
-           data-full-width-responsive="true"></ins>
+    <div class="hdr-search">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><line x1="13.5" y1="13.5" x2="18" y2="18"/></svg>
+      <input type="search" placeholder="Search games…" autocomplete="off" oninput="doSearch(this.value)"/>
     </div>
   </div>
-  
-  <!-- Reward Modal -->
-  <div id="reward-modal">
-    <div class="reward-modal-content">
-      <h2>🎁 Watch & Earn!</h2>
-      <p>Watch a short ad and unlock bonus rewards in your game!</p>
-      <button class="watch-ad-btn" onclick="watchRewardedAd()">
-        ▶ Watch Ad
-      </button>
-      <br>
-      <button class="cancel-btn" onclick="closeRewardModal()">No Thanks</button>
+</header>
+<div class="wrap">
+  <a class="featured" id="games" href="#" onclick="playGame('game/idle-factory/','Idle Factory Tycoon');return false;" data-cat="idle strategy">
+    <div class="feat-art">
+      <div class="factory-scene">
+        <div class="fs-atmo"></div>
+        <div class="f-ch f-ch1"></div><div class="f-ch f-ch2"></div><div class="f-ch f-ch3"></div>
+        <div class="f-sm fs1"></div><div class="f-sm fs2"></div><div class="f-sm fs3"></div><div class="f-sm fs4"></div>
+        <div class="f-main">
+          <div class="f-wing-l"><div class="fw-wins"><div class="f-win"></div><div class="f-win"></div></div></div>
+          <div class="f-wing-r"><div class="fw-wins"><div class="f-win"></div><div class="f-win"></div></div></div>
+          <div class="f-wins r1"><div class="f-win"></div><div class="f-win"></div><div class="f-win"></div><div class="f-win"></div></div>
+          <div class="f-wins r2"><div class="f-win"></div><div class="f-win"></div><div class="f-win"></div><div class="f-win"></div></div>
+          <div class="f-door"></div>
+        </div>
+        <div class="f-gear g1"></div>
+        <div class="f-gear g2"></div>
+        <div class="f-ground"></div>
+      </div>
+      <div class="feat-ov"><div class="feat-play-btn">&#9654;</div></div>
+      <div class="feat-badge">Featured</div>
+    </div>
+    <div class="feat-info">
+      <div class="feat-tags"><span class="feat-tag">Idle</span><span class="feat-tag">Strategy</span><span class="feat-tag">Free</span></div>
+      <h2 class="feat-title">Idle Factory<br/>Tycoon</h2>
+      <p class="feat-desc">Build your empire from a rusty workshop to a cyberpunk megacorp. 10 unique worlds, prestige system, 47 achievements — completely free.</p>
+      <div class="feat-stats">
+        <div class="feat-stat"><strong>10</strong><span>Worlds</span></div>
+        <div class="feat-stat"><strong>47</strong><span>Achievements</span></div>
+        <div class="feat-stat"><strong>Free</strong><span>Always</span></div>
+      </div>
+      <div class="feat-cta">Play now <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="7" x2="12" y2="7"/><polyline points="7,2 12,7 7,12"/></svg></div>
+    </div>
+  </a>
+  <div class="cats-row">
+    <div class="cat on" onclick="filterCat('all',this)">All games</div>
+    <div class="cat" onclick="filterCat('idle',this)">Idle</div>
+    <div class="cat" onclick="filterCat('strategy',this)">Strategy</div>
+    <div class="cat" onclick="filterCat('action',this)">Action</div>
+    <div class="cat" onclick="filterCat('puzzle',this)">Puzzle</div>
+  </div>
+  <div class="sec"><h2>All Games</h2></div>
+  <div class="grid" id="grid">
+    <a class="gc" data-cat="idle strategy" href="#" onclick="playGame('game/idle-factory/','Idle Factory Tycoon');return false;">
+      <div class="gc-img">
+        <div class="mini-fac">
+          <div class="mf-atmo"></div>
+          <div class="mf-ch mc1"></div><div class="mf-ch mc2"></div>
+          <div class="mf-sm ms1"></div><div class="mf-sm ms2"></div>
+          <div class="mf-body"><div class="mf-win"></div><div class="mf-win"></div><div class="mf-win"></div><div class="mf-win"></div></div>
+          <div class="mf-gear"></div>
+        </div>
+        <div class="gc-ov"><div class="gc-play">&#9654;</div></div>
+        <div class="gc-badge">Hot</div>
+      </div>
+      <div class="gc-body">
+        <div class="gc-name">Idle Factory Tycoon</div>
+        <div class="gc-meta"><span class="gc-tag">Idle</span><span class="gc-tag">Free</span></div>
+      </div>
+    </a>
+    <div class="gc gc-soon" data-cat="all"><div class="gc-img"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name gc-dim">Coming soon</div><div class="gc-meta"><span class="gc-tag gc-dim">TBD</span></div></div></div>
+    <div class="gc gc-soon" data-cat="all"><div class="gc-img"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name gc-dim">Coming soon</div><div class="gc-meta"><span class="gc-tag gc-dim">TBD</span></div></div></div>
+    <div class="gc gc-soon" data-cat="all"><div class="gc-img"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name gc-dim">Coming soon</div><div class="gc-meta"><span class="gc-tag gc-dim">TBD</span></div></div></div>
+    <div class="gc gc-soon" data-cat="all"><div class="gc-img"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name gc-dim">Coming soon</div><div class="gc-meta"><span class="gc-tag gc-dim">TBD</span></div></div></div>
+  </div>
+  <div class="ad-row">
+    <div class="ad-box">
+      <ins class="adsbygoogle" data-ad-client="ca-pub-2551267052794968" data-ad-slot="8553436140" data-ad-format="auto" data-full-width-responsive="true" style="display:block;min-height:90px"></ins>
     </div>
   </div>
-  
-  <section class="hero" id="home">
-    <h1>🎮 Play Free Browser Games</h1>
-    <p>No downloads. No registration. Just click and play!</p>
-  </section>
-  
-  <div class="container" id="games">
-    <div class="categories">
-      <button class="cat-btn active" onclick="filterCategory('all')">All</button>
-      <button class="cat-btn" onclick="filterCategory('idle')">Idle</button>
-      <button class="cat-btn" onclick="filterCategory('action')">Action</button>
-      <button class="cat-btn" onclick="filterCategory('puzzle')">Puzzle</button>
-    </div>
-    
-    <h2 class="section-title"><span>🎯</span> Featured Games</h2>
-    <div class="games-grid" id="games-grid">
-      
-      <div class="game-card" data-category="idle" onclick="playGame('game/idle-factory/')">
-        <div class="game-thumb">
-          🏭
-          <span class="game-badge">HOT</span>
-          <span class="game-play">▶ Play</span>
-        </div>
-        <div class="game-info">
-          <div class="game-title">Idle Factory Tycoon</div>
-          <div class="game-desc">Build your factory empire! Click, upgrade, and discover 10 unique worlds.</div>
-          <div class="game-meta">
-            <span>🏭 Idle</span>
-            <span>⭐ 4.8</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="game-card">
-        <div class="game-thumb">
-          🎮
-        </div>
-        <div class="game-info">
-          <div class="game-title">More Games Coming</div>
-          <div class="game-desc">Exciting new games are on the way!</div>
-          <div class="game-meta">
-            <span>Coming Soon</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="game-card">
-        <div class="game-thumb">
-          🎯
-        </div>
-        <div class="game-info">
-          <div class="game-title">Another Game!</div>
-          <div class="game-desc">Stay tuned for something amazing.</div>
-          <div class="game-meta">
-            <span>Coming Soon</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="game-card">
-        <div class="game-thumb">
-          🎲
-        </div>
-        <div class="game-info">
-          <div class="game-title">Dice Quest</div>
-          <div class="game-desc">A thrilling dice adventure awaits!</div>
-          <div class="game-meta">
-            <span>Coming Soon</span>
-          </div>
-        </div>
-      </div>
-      
-    </div>
+  <div class="sec" id="about"><h2>Why play here</h2></div>
+  <div class="feats">
+    <div class="feat-card"><div class="fc-num">0s</div><div class="fc-title">Instant play</div><div class="fc-desc">No download, no account, no waiting. Click a game and you're in.</div></div>
+    <div class="feat-card"><div class="fc-num">&#8734;</div><div class="fc-title">Always free</div><div class="fc-desc">No pay-to-win, no paywalls. Every feature and world — free forever.</div></div>
+    <div class="feat-card"><div class="fc-num">&#128274;</div><div class="fc-title">Privacy first</div><div class="fc-desc">Your saves stay on your device. We don't track your gameplay.</div></div>
   </div>
-  
-  <footer id="about">
-    <p>© 2026 DAGameCenter. All games are free to play!</p>
-    <p style="margin-top: 10px;">
-      <a href="mailto:contact@dagamecenter.com">Contact Us</a>
-    </p>
-  </footer>
-  
-  <!-- AdSense Script -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2551267052794968"
-     crossorigin="anonymous"></script>
-  
-  <script>
-    // Initialize ads
-    (adsbygoogle = window.adsbygoogle || []).push({});
-    
-    function playGame(gamePath) {
-      const container = document.getElementById('game-container');
-      const frame = document.getElementById('game-frame');
-      frame.src = gamePath;
-      container.classList.add('active');
-      document.body.style.overflow = 'hidden';
-      
-      // Reload ads
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    }
-    
-    function closeGame() {
-      const container = document.getElementById('game-container');
-      const frame = document.getElementById('game-frame');
-      frame.src = '';
-      container.classList.remove('active');
-      document.body.style.overflow = 'auto';
-      closeRewardModal();
-    }
-    
-    function showRewardModal() {
-      const modal = document.getElementById('reward-modal');
-      modal.classList.add('active');
-    }
-    
-    function closeRewardModal() {
-      const modal = document.getElementById('reward-modal');
-      modal.classList.remove('active');
-    }
-    
-    function watchRewardedAd() {
-      // Show rewarded video ad
-      // Note: Rewarded ads require special setup in AdSense
-      // This will trigger an overlay ad
-      (adsbygoogle = window.adsbygoogle || []).push({
-        overlays: { bottom: { offset: '400px' } }
-      });
-      
-      closeRewardModal();
-      alert('🎉 Thanks for watching! Bonus unlocked!');
-    }
-    
-    // Close on Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeGame();
-        closeRewardModal();
-      }
-    });
-    
-    // Category filter
-    function filterCategory(cat) {
-      const cards = document.querySelectorAll('.game-card');
-      const btns = document.querySelectorAll('.cat-btn');
-      
-      btns.forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
-      
-      cards.forEach(card => {
-        if (cat === 'all') {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-  </script>
+</div>
+<footer>
+  <span class="f-logo">DA<b>Game</b>Center</span>
+  <p>&#169; 2026 dagamecenter.com</p>
+  <a href="privacy.html">Privacy Policy</a>
+</footer>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2551267052794968" crossorigin="anonymous"></script>
+<script>
+try{(adsbygoogle=window.adsbygoogle||[]).push({})}catch(e){}
+function playGame(src,title){document.getElementById('gframe').src=src;document.getElementById('obar-title').textContent=title;document.getElementById('overlay').classList.add('on');document.body.style.overflow='hidden'}
+function closeGame(){document.getElementById('overlay').classList.remove('on');document.getElementById('gframe').src='';document.body.style.overflow=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGame()})
+function filterCat(cat,btn){document.querySelectorAll('.cat').forEach(c=>c.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('#grid [data-cat]').forEach(c=>{c.style.display=cat==='all'||c.dataset.cat.includes(cat)?'':'none'});const f=document.querySelector('.featured');if(f)f.style.display=cat==='all'||f.dataset.cat.includes(cat)?'':'none'}
+function doSearch(q){q=q.toLowerCase().trim();document.querySelectorAll('#grid [data-cat],.featured').forEach(c=>{const n=c.querySelector('.gc-name,.feat-title');if(!n)return;c.style.display=!q||n.textContent.toLowerCase().includes(q)?'':'none'})}
+</script>
 </body>
 </html>
