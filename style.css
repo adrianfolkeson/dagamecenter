@@ -788,17 +788,18 @@ header {
 .fc-desc { font-size: 14px; color:var(--t2); line-height:1.7 }
 
 /* ── SCROLL ANIMATIONS ───────────────────────────────────────── */
-.fade-up {
+/* JS adds .js-anim to body when observer is ready — only then hide items */
+body.js-anim .fade-up {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity .55s ease, transform .55s ease;
+  transform: translateY(20px);
+  transition: opacity .5s ease, transform .5s ease;
 }
-.fade-up.visible { opacity:1; transform:translateY(0) }
-.fade-up:nth-child(2) { transition-delay:.08s }
-.fade-up:nth-child(3) { transition-delay:.16s }
-.fade-up:nth-child(4) { transition-delay:.24s }
-.fade-up:nth-child(5) { transition-delay:.32s }
-.fade-up:nth-child(6) { transition-delay:.40s }
+body.js-anim .fade-up.visible { opacity:1; transform:translateY(0) }
+body.js-anim .fade-up:nth-child(2) { transition-delay:.07s }
+body.js-anim .fade-up:nth-child(3) { transition-delay:.14s }
+body.js-anim .fade-up:nth-child(4) { transition-delay:.21s }
+body.js-anim .fade-up:nth-child(5) { transition-delay:.28s }
+body.js-anim .fade-up:nth-child(6) { transition-delay:.35s }
 
 /* ── FOOTER ──────────────────────────────────────────────────── */
 footer {
