@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#1a0a14"/>
+      <stop offset="100%" stop-color="#08080e"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#e94560" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#e94560" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="f" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="64" height="64" rx="13" fill="url(#bg)"/>
+  <!-- Subtle red glow behind text -->
+  <rect width="64" height="64" rx="13" fill="url(#glow)"/>
+  <!-- DA text with glow -->
+  <text
+    x="32" y="43"
+    text-anchor="middle"
+    font-family="Arial Black, Impact, sans-serif"
+    font-weight="900"
+    font-size="32"
+    letter-spacing="-1"
+    fill="#e94560"
+    filter="url(#f)"
+  >DA</text>
+</svg>
