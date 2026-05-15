@@ -45,7 +45,10 @@
 
 /* ── RESET ───────────────────────────────────────────────────── */
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
-html { scroll-behavior:smooth }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;   /* clip at root to prevent mobile layout shift */
+}
 body {
   font-family: var(--fb);
   background: var(--bg);
@@ -53,6 +56,8 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100dvh;
   overflow-x: hidden;
+  touch-action: pan-y;  /* prevent double-tap zoom jump */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ── PAGE BG LAYERS ──────────────────────────────────────────── */
@@ -264,30 +269,41 @@ header {
 .hero-section {
   position: relative;
   margin: 24px 0 28px;
+  overflow: hidden;     /* clip orbs so they never bleed outside and cause reflow */
 }
 .hero-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(60px);
   pointer-events: none;
   z-index: 0;
+  will-change: transform; /* GPU layer — prevents layout involvement */
 }
 .hero-orb-1 {
-  width: 400px; height: 300px;
-  top: -60px; left: -80px;
+  width: 280px; height: 220px;  /* smaller — stays inside on all screens */
+  top: -40px; left: -40px;
   background: oklch(58% 0.234 14 / 0.10);
   animation: orbdrift 12s ease-in-out infinite alternate;
 }
 .hero-orb-2 {
-  width: 350px; height: 280px;
-  bottom: -60px; right: -60px;
+  width: 250px; height: 200px;
+  bottom: -40px; right: -40px;
   background: oklch(63% 0.19 282 / 0.09);
   animation: orbdrift 16s ease-in-out infinite alternate-reverse;
 }
 @keyframes orbdrift {
   0%   { transform: translate(0,0) scale(1) }
-  50%  { transform: translate(20px,10px) scale(1.06) }
-  100% { transform: translate(-10px,20px) scale(.96) }
+  50%  { transform: translate(12px,8px) scale(1.04) }
+  100% { transform: translate(-8px,14px) scale(.97) }
+}
+/* Disable orb animation on mobile — GPU blur+animation is expensive on low-end devices */
+@media (max-width: 600px) {
+  .hero-orb { animation: none; filter: blur(40px); }
+  .hero-orb-1 { width: 180px; height: 140px; }
+  .hero-orb-2 { width: 160px; height: 130px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb { animation: none; }
 }
 
 /* ── FEATURED ────────────────────────────────────────────────── */
