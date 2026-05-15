@@ -16,7 +16,8 @@ window.Touch = (function () {
     if (active) return;
     if (!isTouchDevice()) return;
     active = true;
-    const frame = document.getElementById('frame');
+    // Append to document.body so the touch UI does NOT scale with the frame.
+    const host = document.body;
 
     // joystick base + knob
     const base = document.createElement('div');
@@ -24,7 +25,7 @@ window.Touch = (function () {
     const knob = document.createElement('div');
     knob.className = 'tch-joy-knob';
     base.appendChild(knob);
-    frame.appendChild(base);
+    host.appendChild(base);
 
     // action cluster
     const cluster = document.createElement('div');
@@ -37,7 +38,7 @@ window.Touch = (function () {
         <button class="tch-btn small" data-act="snapshot" aria-label="Snapshot">P</button>
       </div>
     `;
-    frame.appendChild(cluster);
+    host.appendChild(cluster);
 
     // -- Joystick: track centre + radius
     const RADIUS = 56;

@@ -1531,9 +1531,9 @@ button {
 
 /* ---- Touch controls ------------------------------------------------ */
 .tch-joy-base {
-  position: absolute;
-  left: 40px;
-  bottom: 40px;
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
   width: 140px;
   height: 140px;
   border-radius: 50%;
@@ -1558,9 +1558,9 @@ button {
   pointer-events: none;
 }
 .tch-cluster {
-  position: absolute;
-  right: 36px;
-  bottom: 36px;
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -1637,4 +1637,100 @@ button {
 .exim-actions {
   display: flex;
   gap: 8px;
+}
+
+/* ---- Rotate-phone overlay ----------------------------------------- */
+#rotate-hint {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: radial-gradient(ellipse at 50% 50%, #2a221a 0%, #14100c 80%);
+  align-items: center;
+  justify-content: center;
+  color: var(--paper);
+  text-align: center;
+  padding: 20px;
+}
+.rotate-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 320px;
+}
+.rotate-card svg {
+  color: var(--paper);
+  opacity: .9;
+  animation: rotate-shake 1.6s ease-in-out infinite;
+}
+@keyframes rotate-shake {
+  0%, 100% { transform: rotate(0); }
+  40%      { transform: rotate(-90deg); }
+  60%      { transform: rotate(-90deg); }
+}
+.rotate-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.rotate-text {
+  font-size: 14px;
+  color: #d4c79a;
+}
+@media (max-width: 720px) and (orientation: portrait) {
+  #rotate-hint { display: flex; }
+  /* Hide touch UI behind the rotate prompt so it doesn't leak through. */
+  .tch-joy-base, .tch-cluster { display: none !important; }
+}
+
+/* ---- Touch UI scaling on small landscape phones -------------------- */
+@media (max-width: 820px) and (orientation: landscape) {
+  .tch-joy-base { width: 110px; height: 110px; left: 14px; bottom: 14px; }
+  .tch-joy-knob { width: 48px; height: 48px; }
+  .tch-cluster  { right: 14px; bottom: 14px; gap: 6px; }
+  .tch-action   { width: 70px; height: 70px; font-size: 28px; }
+  .tch-btn.small { width: 42px; height: 42px; font-size: 14px; }
+}
+
+/* ---- HUD compaction on narrow viewports ---------------------------- */
+@media (max-width: 900px) {
+  #hud {
+    padding: 6px 10px !important;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .hud-chip {
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+  }
+  .hud-chip .icon svg { width: 16px; height: 16px; }
+  .hud-btn {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  .scene-name {
+    font-size: 13px !important;
+  }
+}
+
+/* ---- Modal full-width on phones ----------------------------------- */
+@media (max-width: 720px) {
+  .modal { padding: 8px !important; }
+  .modal-card {
+    max-width: 100% !important;
+    max-height: 92vh !important;
+    border-radius: 14px !important;
+  }
+  .modal-head h2 { font-size: 18px !important; }
+  .modal-head .sub { font-size: 12px !important; }
+  .modal-body { padding: 12px 14px !important; }
+  .tutor-card { bottom: 70px; max-width: 86vw; font-size: 13px; }
+  #dialog { font-size: 13px; }
+  /* HUD button row may overflow — let it wrap into a 2-row strip. */
+  .hud-right, .hud-left { flex-wrap: wrap; }
+  /* shrink intro modal copy so Begin button stays in view */
+  .intro h1 { font-size: 28px !important; margin: 6px 0 !important; }
+  .intro .copy { font-size: 13px !important; }
+  .intro .controls { font-size: 12px !important; }
 }
