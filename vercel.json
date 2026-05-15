@@ -5,6 +5,8 @@
     { "source": "/game/neon-drift/(.*)", "destination": "/game/neon-drift/index.html" },
     { "source": "/game/ai-startup-clicker/assets/(.*)", "destination": "/game/ai-startup-clicker/assets/$1" },
     { "source": "/game/ai-startup-clicker/(.*)", "destination": "/game/ai-startup-clicker/index.html" },
+    { "source": "/game/wishbloom-hollow/assets/(.*)", "destination": "/game/wishbloom-hollow/assets/$1" },
+    { "source": "/game/wishbloom-hollow/(.*)", "destination": "/game/wishbloom-hollow/index.html" },
     { "source": "/game/(.*)", "destination": "/game/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],

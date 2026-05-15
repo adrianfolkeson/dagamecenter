@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en" data-season="wishfall">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#120a2e" />
+  <title>Wishbloom Hollow</title>
+
+  <!-- Design tokens + animations (from Wishbloom Hollow design system) -->
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overscroll-behavior: none;
+      background: var(--night-0);
+      color: var(--cream);
+      font-family: var(--font-ui);
+    }
+
+    #game-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Phaser mounts the canvas here */
+    #game-container canvas {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    /* Splash — fades out once Phaser boots */
+    .wh-splash {
+      position: fixed;
+      inset: 0;
+      background: var(--night-1);
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 28px;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .wh-splash[data-gone="1"] {
+      opacity: 0;
+    }
+    .wh-splash__sub {
+      font-family: var(--font-ui);
+      font-style: normal;
+      font-size: 13px;
+      color: var(--whisper);
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* Starfield behind the canvas while loading */
+    .wh-splash-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 55% at 50% 100%, var(--night-3) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 20% 30%, rgba(107, 78, 163, 0.45) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 30% at 80% 20%, rgba(200, 155, 255, 0.18) 0%, transparent 60%),
+        linear-gradient(180deg, var(--night-0) 0%, var(--night-1) 50%, var(--night-2) 100%);
+    }
+    .wh-splash-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      animation: wh-gentle-rise 0.6s var(--ease-soft) both;
+    }
+    .wh-splash-glyph {
+      font-size: 42px;
+      animation: wh-breath 3s ease-in-out infinite;
+      display: block;
+    }
+  </style>
+  <!-- CrazyGames SDK — no-op if loaded outside CrazyGames iframe -->
+  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+  <script type="module" crossorigin src="/game/wishbloom-hollow/assets/index-BlZo12Hz.js"></script>
+  <link rel="stylesheet" crossorigin href="/game/wishbloom-hollow/assets/index-B5xpDPp3.css">
+</head>
+<body>
+  <div id="game-container"></div>
+
+  <div class="wh-splash" id="splash">
+    <div class="wh-splash-bg"></div>
+    <div class="wh-splash-content">
+      <span class="wh-splash-glyph">✦</span>
+      <span>Wishbloom Hollow</span>
+      <span class="wh-splash__sub">tending wishes…</span>
+    </div>
+  </div>
+
+</body>
+</html>
