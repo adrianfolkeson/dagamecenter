@@ -130,7 +130,46 @@
         </div>
       </div>
     </a>
-    <div class="gc gc-soon" role="listitem" data-cat="all" aria-label="Coming soon"><div class="gc-img" aria-hidden="true"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name gc-dim">Coming soon</div><div class="gc-meta"><span class="gc-tag gc-dim">TBD</span></div></div></div>
+    <a class="gc" role="listitem" data-cat="action arcade" href="#" onclick="playGame('game/neon-drift/','Neon Drift');return false;" aria-label="Play Neon Drift — Synthwave arcade racer, rated 4.7 out of 5">
+      <div class="gc-img" aria-hidden="true">
+        <div style="width:100%;height:100%;background:linear-gradient(160deg,#050010 0%,#0D0030 60%,#1A0050 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+          <!-- Neon road preview -->
+          <svg width="100%" height="100%" viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+            <defs><filter id="glow"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+            <!-- Road -->
+            <polygon points="55,100 105,100 90,40 70,40" fill="#0A001A"/>
+            <!-- Road edges -->
+            <line x1="55" y1="100" x2="70" y2="40" stroke="#FF00FF" stroke-width="1.5" filter="url(#glow)"/>
+            <line x1="105" y1="100" x2="90" y2="40" stroke="#FF00FF" stroke-width="1.5" filter="url(#glow)"/>
+            <!-- Horizon glow -->
+            <ellipse cx="80" cy="40" rx="30" ry="6" fill="rgba(180,0,255,0.25)"/>
+            <!-- Grid lines -->
+            <line x1="62" y1="72" x2="98" y2="72" stroke="rgba(140,0,255,0.5)" stroke-width="0.8"/>
+            <line x1="66" y1="60" x2="94" y2="60" stroke="rgba(120,0,220,0.4)" stroke-width="0.6"/>
+            <line x1="69" y1="50" x2="91" y2="50" stroke="rgba(100,0,200,0.3)" stroke-width="0.5"/>
+            <!-- Car -->
+            <polygon points="80,85 74,90 86,90" fill="#00FFFF" filter="url(#glow)"/>
+            <!-- Obstacles (energy barriers) -->
+            <rect x="70" y="63" width="8" height="6" fill="rgba(255,0,68,0.2)" stroke="#FF0044" stroke-width="1" filter="url(#glow)"/>
+            <rect x="82" y="55" width="8" height="5" fill="rgba(255,0,68,0.2)" stroke="#FF0044" stroke-width="1" filter="url(#glow)"/>
+            <!-- Stars -->
+            <circle cx="30" cy="15" r="0.8" fill="rgba(200,180,255,0.6)"/>
+            <circle cx="120" cy="20" r="0.8" fill="rgba(200,180,255,0.5)"/>
+            <circle cx="50" cy="8" r="0.6" fill="rgba(200,180,255,0.4)"/>
+            <circle cx="140" cy="12" r="0.6" fill="rgba(200,180,255,0.4)"/>
+          </svg>
+        </div>
+        <div class="gc-ov"><div class="gc-play">&#9654; Play</div></div>
+        <div class="gc-badge">New</div>
+      </div>
+      <div class="gc-body">
+        <div class="gc-name">Neon Drift</div>
+        <div class="gc-meta">
+          <span class="gc-tag">Arcade</span>
+          <div class="gc-rating"><span class="gc-rating-stars" aria-label="4.7 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 4.7</div>
+        </div>
+      </div>
+    </a>
     <div class="gc gc-soon" role="listitem" data-cat="all" aria-label="Coming soon"><div class="gc-img" aria-hidden="true"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name gc-dim">Coming soon</div><div class="gc-meta"><span class="gc-tag gc-dim">TBD</span></div></div></div>
     <div class="gc gc-soon" role="listitem" data-cat="all" aria-label="Coming soon"><div class="gc-img" aria-hidden="true"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name gc-dim">Coming soon</div><div class="gc-meta"><span class="gc-tag gc-dim">TBD</span></div></div></div>
     <div class="gc gc-soon" role="listitem" data-cat="all" aria-label="Coming soon"><div class="gc-img" aria-hidden="true"><div class="soon-ring">+</div></div><div class="gc-body"><div class="gc-name gc-dim">Coming soon</div><div class="gc-meta"><span class="gc-tag gc-dim">TBD</span></div></div></div>
