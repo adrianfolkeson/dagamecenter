@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Lumenwood — A garden of little lights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div id="stage">
+  <div id="frame">
+    <!-- The world canvas — everything game-y is drawn here -->
+    <canvas id="world" width="1280" height="800"></canvas>
+
+    <!-- HUD bar -->
+    <div id="hud">
+      <div class="hud-left">
+        <div class="hud-chip dust" title="Sparkledust">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22">
+              <defs>
+                <radialGradient id="dg" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%"  stop-color="#fff5dc"/>
+                  <stop offset="60%" stop-color="#ffd97a"/>
+                  <stop offset="100%" stop-color="#e8b87f" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <circle cx="12" cy="12" r="10" fill="url(#dg)"/>
+              <circle cx="12" cy="12" r="4" fill="#fff5dc"/>
+            </svg>
+          </span>
+          <span><span id="dust-count">0</span> sparkledust</span>
+        </div>
+        <div class="hud-chip" title="Discovered Glims">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#4a3a2c" stroke-width="2" stroke-linejoin="round">
+              <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2z"/>
+              <path d="M9 8h6M9 12h6"/>
+            </svg>
+          </span>
+          <span><span id="caught-count">0/60</span> friends</span>
+        </div>
+        <div class="hud-chip inventory" id="hud-inventory" title="Basket" style="display:none;">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#4a3a2c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+              <path d="M3 8h18l-2 11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/>
+              <path d="M8 8V6a4 4 0 0 1 8 0v2"/>
+            </svg>
+          </span>
+          <span class="swatches"></span>
+          <span class="total">0 in basket</span>
+        </div>
+      </div>
+
+      <div id="scene-name" class="scene-name">Mossroot Hollow</div>
+
+      <div class="hud-right">
+        <button class="hud-btn" id="btn-quests" title="Quests (Q)" aria-label="Open quests">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M3 7a2 2 0 0 1 2-2h6l2 2h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <path d="M9 13h6M9 17h4"/>
+          </svg>
+        </button>
+        <button class="hud-btn" id="btn-stickers" title="Stickers" aria-label="Open sticker book">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <polygon points="12,3 14.6,8.6 20.7,9.5 16.4,13.8 17.4,19.9 12,17 6.6,19.9 7.6,13.8 3.3,9.5 9.4,8.6"/>
+          </svg>
+        </button>
+        <button class="hud-btn" id="btn-gallery" title="Snapshots" aria-label="Open gallery">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="3" y="5" width="18" height="14" rx="2"/>
+            <circle cx="9" cy="11" r="1.5"/>
+            <path d="M21 17l-5-5-7 7"/>
+          </svg>
+        </button>
+        <button class="hud-btn" id="btn-journal" title="Journal (J)" aria-label="Open journal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/>
+            <path d="M8 7h8M8 11h8M8 15h5"/>
+          </svg>
+        </button>
+        <button class="hud-btn" id="btn-settings" title="Settings" aria-label="Open settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating action prompt (E to enter, etc.) -->
+    <div id="prompt"></div>
+
+    <!-- Dialog box (signpost / narrator) -->
+    <div id="dialog">
+      <div class="speaker"></div>
+      <div class="line"></div>
+      <div class="hint">Esc to dismiss</div>
+    </div>
+
+    <!-- Toast tray (caught a Glim!) -->
+    <div id="toasts"></div>
+
+    <!-- Intro modal -->
+    <div class="modal show" id="modal-intro">
+      <div class="modal-card" style="max-width: 600px;">
+        <div class="modal-body">
+          <div class="intro">
+            <div style="font-size:14px; letter-spacing:.2em; color:var(--ink-light); text-transform:uppercase; font-weight:600;">A garden of little lights</div>
+            <h1>Lumenwood</h1>
+            <div class="tag">You're a new Lantern Keeper. The forest is waiting.</div>
+            <div class="copy">
+              Tiny floating sparks called <b>Glims</b> live throughout Mossroot Hollow.
+              Each one has a name, a favorite food, and a favorite place to be.
+              Find them, blow a soft bubble to say hello, and bring them home to your treehouse.
+              There's no losing here — only meeting friends.
+            </div>
+            <div class="controls">
+              <div>Move <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / arrows</span></div>
+              <div>Bubble <span><kbd>Space</kbd></span></div>
+              <div>Interact <span><kbd>E</kbd></span></div>
+              <div>Journal <span><kbd>J</kbd></span></div>
+              <div>Treehouse <span><kbd>H</kbd></span></div>
+              <div>Close menus <span><kbd>Esc</kbd></span></div>
+            </div>
+            <button class="btn-primary" id="start-game">Begin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journal modal -->
+    <div class="modal" id="modal-journal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <h2>The Keeper's Journal</h2>
+            <div class="sub">Fills in as you meet Glims and discover the forest.</div>
+          </div>
+          <button class="close-btn" id="close-journal" aria-label="Close journal">✕</button>
+        </div>
+        <div class="modal-body" id="journal-body"></div>
+      </div>
+    </div>
+
+    <!-- Settings modal -->
+    <div class="modal" id="modal-settings">
+      <div class="modal-card" style="max-width: 560px;">
+        <div class="modal-head">
+          <div>
+            <h2>Settings</h2>
+            <div class="sub">Comfort, accessibility, and starting over.</div>
+          </div>
+          <button class="close-btn" id="close-settings" aria-label="Close settings">✕</button>
+        </div>
+        <div class="modal-body" id="settings-body"></div>
+      </div>
+    </div>
+
+    <!-- Shop modal -->
+    <div class="modal" id="modal-shop">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <h2>Pippa’s Stand</h2>
+            <div class="sub">Foraged from all over the Hollow. Each Glim has a favourite.</div>
+          </div>
+          <button class="close-btn" id="close-shop" aria-label="Close shop">✕</button>
+        </div>
+        <div class="modal-body" id="shop-body"></div>
+      </div>
+    </div>
+
+    <!-- Care modal -->
+    <div class="modal" id="modal-care">
+      <div class="modal-card" style="max-width: 620px;">
+        <div class="modal-head">
+          <div>
+            <h2>Caring for your Glim</h2>
+            <div class="sub">Feed, pet, and collect any thank-you gifts.</div>
+          </div>
+          <button class="close-btn" id="close-care" aria-label="Close care">✕</button>
+        </div>
+        <div class="modal-body" id="care-body"></div>
+      </div>
+    </div>
+
+    <!-- Cooking modal -->
+    <div class="modal" id="modal-cooking">
+      <div class="modal-card" style="max-width: 720px;">
+        <div class="modal-head">
+          <div>
+            <h2>The Workshop</h2>
+            <div class="sub">Combine two ingredients. Stir at the warm spot for a perfect batch.</div>
+          </div>
+          <button class="close-btn" id="close-cooking" aria-label="Close kitchen">✕</button>
+        </div>
+        <div class="modal-body" id="cooking-body"></div>
+      </div>
+    </div>
+
+    <!-- Bubble-rhythm modal -->
+    <div class="modal" id="modal-rhythm">
+      <div class="modal-card" style="max-width: 560px;">
+        <div class="modal-head">
+          <div>
+            <h2>Bubble Practice</h2>
+            <div class="sub">A song of soap bubbles. Tap on the catch line.</div>
+          </div>
+          <button class="close-btn" id="close-rhythm" aria-label="Close rhythm">✕</button>
+        </div>
+        <div class="modal-body" id="rhythm-body"></div>
+      </div>
+    </div>
+
+    <!-- Customization modal -->
+    <div class="modal" id="modal-customize">
+      <div class="modal-card" style="max-width: 580px;">
+        <div class="modal-head">
+          <div>
+            <h2>Your Keeper</h2>
+            <div class="sub">Pick a look. You can change it later in Settings.</div>
+          </div>
+          <button class="close-btn" id="close-customize" aria-label="Close customization">✕</button>
+        </div>
+        <div class="modal-body" id="customize-body"></div>
+      </div>
+    </div>
+
+    <!-- Stickers modal -->
+    <div class="modal" id="modal-stickers">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <h2>Sticker Book</h2>
+            <div class="sub">Tiny badges for tiny adventures.</div>
+          </div>
+          <button class="close-btn" id="close-stickers" aria-label="Close stickers">✕</button>
+        </div>
+        <div class="modal-body" id="stickers-body"></div>
+      </div>
+    </div>
+
+    <!-- Quests modal -->
+    <div class="modal" id="modal-quests">
+      <div class="modal-card" style="max-width: 600px;">
+        <div class="modal-head">
+          <div>
+            <h2>Friends' Wishes</h2>
+            <div class="sub">Little favours your villagers have asked for.</div>
+          </div>
+          <button class="close-btn" id="close-quests" aria-label="Close quests">✕</button>
+        </div>
+        <div class="modal-body" id="quests-body"></div>
+      </div>
+    </div>
+
+    <!-- Snapshot modal -->
+    <div class="modal" id="modal-snapshot">
+      <div class="modal-card" style="max-width: 680px;">
+        <div class="modal-head">
+          <div>
+            <h2>Snapshot</h2>
+            <div class="sub">Name your photo and hang it in your treehouse.</div>
+          </div>
+          <button class="close-btn" id="close-snapshot" aria-label="Close snapshot">✕</button>
+        </div>
+        <div class="modal-body" id="snapshot-body"></div>
+      </div>
+    </div>
+
+    <!-- Snapshot gallery modal -->
+    <div class="modal" id="modal-gallery">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <h2>Your Snapshots</h2>
+            <div class="sub">Pictures you've hung in the treehouse.</div>
+          </div>
+          <button class="close-btn" id="close-gallery" aria-label="Close gallery">✕</button>
+        </div>
+        <div class="modal-body" id="gallery-body"></div>
+      </div>
+    </div>
+
+    <!-- Cloud-fishing modal -->
+    <div class="modal" id="modal-fishing">
+      <div class="modal-card" style="max-width: 640px;">
+        <div class="modal-head">
+          <div>
+            <h2>Cloud-fishing</h2>
+            <div class="sub">Wait for the cloud-fish to drift into the bright band, then cast.</div>
+          </div>
+          <button class="close-btn" id="close-fishing" aria-label="Close fishing">✕</button>
+        </div>
+        <div class="modal-body" id="fishing-body"></div>
+      </div>
+    </div>
+
+    <!-- Constellation tracer modal -->
+    <div class="modal" id="modal-constellation">
+      <div class="modal-card" style="max-width: 720px;">
+        <div class="modal-head">
+          <div>
+            <h2>Trace a Constellation</h2>
+            <div class="sub">Touch the stars in the order Astra points them out.</div>
+          </div>
+          <button class="close-btn" id="close-constellation" aria-label="Close constellation">✕</button>
+        </div>
+        <div class="modal-body" id="constellation-body"></div>
+      </div>
+    </div>
+
+    <!-- Plant picker modal -->
+    <div class="modal" id="modal-plant">
+      <div class="modal-card" style="max-width: 520px;">
+        <div class="modal-head">
+          <div>
+            <h2>Plant a seed</h2>
+            <div class="sub">It will grow over the next few minutes of play.</div>
+          </div>
+          <button class="close-btn" id="close-plant" aria-label="Close plant picker">✕</button>
+        </div>
+        <div class="modal-body" id="plant-body"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Data + engine. Order matters: data before entities; entities before world (world calls Entities.drawGlimSprite for lanterns); world before ui (ui doesn't strictly need it); everything before game. -->
+<script src="data/glims.js"></script>
+<script src="data/foods.js"></script>
+<script src="data/recipes.js"></script>
+<script src="data/seeds.js"></script>
+<script src="data/quests.js"></script>
+<script src="data/decor.js"></script>
+<script src="data/stickers.js"></script>
+<script src="src/input.js"></script>
+<script src="src/save.js"></script>
+<script src="src/entities.js"></script>
+<script src="src/world.js"></script>
+<script src="src/interactions.js"></script>
+<script src="src/cooking.js"></script>
+<script src="src/gardening.js"></script>
+<script src="src/festival.js"></script>
+<script src="src/sound.js"></script>
+<script src="src/minigame.js"></script>
+<script src="src/fishing.js"></script>
+<script src="src/snapshot.js"></script>
+<script src="src/quests.js"></script>
+<script src="src/seasons.js"></script>
+<script src="src/weather.js"></script>
+<script src="src/surprise.js"></script>
+<script src="src/rhythm.js"></script>
+<script src="src/tutorial.js"></script>
+<script src="src/stickers.js"></script>
+<script src="src/touch.js"></script>
+<script src="src/speech.js"></script>
+<script src="src/ui.js"></script>
+<script src="src/game.js"></script>
+
+</body>
+</html>
