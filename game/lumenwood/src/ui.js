@@ -434,8 +434,15 @@ window.UI = (function () {
     const W = 1280, H = 800;
     const sx = window.innerWidth  / W;
     const sy = window.innerHeight / H;
-    const s = Math.min(sx, sy);
+    // Small / phone-sized viewports: cover-fill (Math.max) so the game uses
+    // the whole screen. Frame anchors to the top so the HUD stays visible;
+    // overflow on the bottom is harmless because each biome scrolls its own
+    // larger world canvas.
+    const isSmall = window.innerWidth < 900 || window.innerHeight < 600;
+    const s = isSmall ? Math.max(sx, sy) : Math.min(sx, sy);
     frame.style.transform = `scale(${s})`;
+    frame.style.transformOrigin = isSmall ? 'center top' : 'center center';
+    document.getElementById('stage').style.placeItems = isSmall ? 'start center' : 'center';
   }
   window.addEventListener('resize', fitStage);
 
