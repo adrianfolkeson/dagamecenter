@@ -3,6 +3,8 @@
     { "source": "/_expo/(.*)", "destination": "/game/idle-factory/_expo/$1" },
     { "source": "/game/idle-factory/(.*)", "destination": "/game/idle-factory/index.html" },
     { "source": "/game/neon-drift/(.*)", "destination": "/game/neon-drift/index.html" },
+    { "source": "/game/ai-startup-clicker/assets/(.*)", "destination": "/game/ai-startup-clicker/assets/$1" },
+    { "source": "/game/ai-startup-clicker/(.*)", "destination": "/game/ai-startup-clicker/index.html" },
     { "source": "/game/(.*)", "destination": "/game/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
