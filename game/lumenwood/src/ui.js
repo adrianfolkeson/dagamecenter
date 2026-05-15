@@ -432,19 +432,31 @@ window.UI = (function () {
   function fitStage() {
     const frame = document.getElementById('frame');
     const W = 1280, H = 800;
-    const sx = window.innerWidth  / W;
-    const sy = window.innerHeight / H;
+    // Use visualViewport when available (more accurate inside iframes / on
+    // mobile where the URL bar dynamically resizes the viewport).
+    const vv = window.visualViewport;
+    const vw = vv ? vv.width  : window.innerWidth;
+    const vh = vv ? vv.height : window.innerHeight;
+    const sx = vw / W;
+    const sy = vh / H;
     // Small / phone-sized viewports: cover-fill (Math.max) so the game uses
-    // the whole screen. Frame anchors to the top so the HUD stays visible;
-    // overflow on the bottom is harmless because each biome scrolls its own
-    // larger world canvas.
-    const isSmall = window.innerWidth < 900 || window.innerHeight < 600;
+    // the whole screen. Frame anchors to the top so the HUD stays visible.
+    const isSmall = vw < 1100 || vh < 700;
     const s = isSmall ? Math.max(sx, sy) : Math.min(sx, sy);
     frame.style.transform = `scale(${s})`;
     frame.style.transformOrigin = isSmall ? 'center top' : 'center center';
     document.getElementById('stage').style.placeItems = isSmall ? 'start center' : 'center';
   }
   window.addEventListener('resize', fitStage);
+  window.addEventListener('orientationchange', () => setTimeout(fitStage, 80));
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', fitStage);
+  }
+  // Re-fit a few times after load — iframes sometimes report stale sizes
+  // until the parent has settled their layout.
+  window.addEventListener('load', () => {
+    [100, 300, 700, 1500].forEach(d => setTimeout(fitStage, d));
+  });
 
   // =========================================================================
   // Wiring (called once at boot)

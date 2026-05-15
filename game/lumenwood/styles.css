@@ -88,6 +88,9 @@ button {
   place-items: center;
   background:
     radial-gradient(ellipse at 50% 35%, #4a3a2c 0%, #2a221a 70%);
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
 }
 
 #frame {
@@ -96,6 +99,7 @@ button {
   height: 800px;
   max-width: 100vw;
   max-height: 100vh;
+  max-height: 100dvh;
   transform-origin: center center;
   background: var(--paper);
   border-radius: 0;
